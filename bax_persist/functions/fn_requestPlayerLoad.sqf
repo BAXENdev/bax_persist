@@ -24,7 +24,9 @@ _unit setUnitTrait ["Engineer", _engineerTrait > 0];
 _posDir params ["_position", "_direction"];
 _player setPos _position;
 _player setDir _direction;
-[_player, _medical] call ace_medical_fnc_deserializeState;
+if (bax_persist_loadPlayerMedical) then {
+	[_player, _medical] call ace_medical_fnc_deserializeState;
+};
 if (bax_persist_loadPlayerVariables) then {
 	{
 		_x params ["_variable", "_value"];

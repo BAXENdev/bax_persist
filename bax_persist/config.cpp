@@ -90,14 +90,14 @@ class CfgVehicles {
 		class Attributes: AttributesBase {
 			class EnablePlayerDB: Checkbox {
 				displayName = "Load Player Database";
-				tooltip = "";
+				tooltip = "Enables loading of player data from previous sessions.";
 				property = "Bax_Persist_LoadPlayerDatabase";
 				defaultValue = "true";
 			};
 
 			class EnableObjectDB: Checkbox {
 				displayName = "Load Object Database";
-				tooltip = "";
+				tooltip = "Enables loading of saved objects. If not loaded, objects will not be saved for the next mission.";
 				property = "Bax_Persist_LoadObjectDatabase";
 				defaultValue = "true";
 			};
