@@ -25,6 +25,7 @@ class CfgFunctions {
 			class moduleRegisterVariable {};
 			class postinit {};
 			class preinit {};
+			class queueSaveDatabase {};
 			class registerInventoryObject {};
 			class requestInventoryLoad {};
 			class requestInventorySave {};
@@ -34,7 +35,9 @@ class CfgFunctions {
 			class saveDatabaseObjects {};
 			class saveDatabasePlayers {};
 			class saveDatabaseVariables {};
+			class savePlayerToDatabase {};
 			class serializeObjectInventory {};
+			class zeusSaveDatabase {};
 		};
 	};
 };
@@ -83,57 +86,112 @@ class CfgVehicles {
 		category = "Bax_Persist";
 
 		function = "bax_persist_fnc_moduleInitializePersist";
-		functionPriority = 0;
+		functionPriority = 10;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
 		class Attributes: AttributesBase {
+			class SubCategorySaving {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Player Persistence Settings";
+			};
+
+			class EnableSaving: Checkbox {
+				displayName = "Saving Enabled";
+				tooltip = "Enables saving the mission. All 3den instances do not allow saving the database.";
+				property = "Bax_Persist_EnableSaving";
+				defaultValue = "true";
+			};
+
+			class AutosaveTimer: Edit {
+				displayName = "Autosave Timer";
+				tooltip = "How often autosaving occurs. min=15 | max=120 in minutes.";
+				property = "Bax_Persist_AutosaveTimer";
+				defaultValue = "40";
+				typeName = "NUMBER";
+			};
+
+			// TODO: Combo box for selecting namespace. Do I offer profileNamespace?
+
+			class SubCategoryPlayer {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Player Persistence Settings";
+			};
+
 			class EnablePlayerDB: Checkbox {
-				displayName = "Load Player Database";
+				displayName = "Player Database";
 				tooltip = "Enables loading of player data from previous sessions.";
 				property = "Bax_Persist_LoadPlayerDatabase";
 				defaultValue = "true";
 			};
 
-			class EnableObjectDB: Checkbox {
-				displayName = "Load Object Database";
-				tooltip = "Enables loading of saved objects. If not loaded, objects will not be saved for the next mission.";
-				property = "Bax_Persist_LoadObjectDatabase";
+			class EnablePlayerPosition: Checkbox {
+				displayName = "Player Position";
+				tooltip = "Whether or not to load player's previous position";
+				property = "Bax_Persist_LoadPlayerPosition";
 				defaultValue = "true";
 			};
 
-			class EnableVariableDB: Checkbox {
-				displayName = "Load Variable Database";
-				tooltip = "";
-				property = "Bax_Persist_LoadVariableDatabase";
-				defaultValue = "true";
-			};
-
-			// class EnableInventoriesDB: Checkbox {
-			// 	displayName = "Load Object Inventories Database";
-			// 	tooltip = "";
-			// 	property = "Bax_Persist_LoadInventoriesDatabase";
-			// 	defaultValue = "true";
-			// };
-
-			class EnablePlayerVars: Checkbox {
-				displayName = "Load Player Variables";
-				tooltip = "When player data is loaded, whether to load any stored variables.";
-				property = "Bax_Persist_LoadPlayerVariables";
-				defaultValue = "true";
-			};
-			
 			class EnablePlayerMedical: Checkbox {
-				displayName = "Load Player Medical";
-				tooltip = "When players are loaded, whether to load the saved medical state.";
+				displayName = "Player Medical";
+				tooltip = "Whether or not to load player's previous medical state. Does not stop loading a dead player.";
 				property = "Bax_Persist_LoadPlayerMedical";
 				defaultValue = "true";
 			};
 
-			class EnableObjectVars: Checkbox {
-				displayName = "Load Object Variables";
-				tooltip = "When objects are loaded, whether to load any stored variables.";
-				property = "Bax_Persist_LoadObjectVariables";
+			class EnablePlayerKeySide: Checkbox {
+				displayName = "Enable Side Keying";
+				tooltip = "Player data is saved based on their side. Enabling side keying at later date will not load the previous un-sided data.";
+				property = "Bax_Persist_LoadPlayerKeySide";
+				defaultValue = "true";
+			};
+
+			class EnablePlayerKeyRole: Checkbox {
+				displayName = "Load Player Database";
+				tooltip = "Player data is saved based on their role. Enabling role keying at later date will not load the previous un-roled data.";
+				property = "Bax_Persist_LoadPlayerKeyRole";
+				defaultValue = "true";
+			};
+
+			class SubCategoryObject {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Object Persistence Settings";
+			};
+
+			class EnableObjectDB: Checkbox {
+				displayName = "Object Database";
+				tooltip = "Enables loading of object data from previous sessions.";
+				property = "Bax_Persist_LoadObjectDatabase";
+				defaultValue = "true";
+			};
+
+			class EnableObjectDamage: Checkbox {
+				displayName = "Object Damage";
+				tooltip = "Whether or not to load an object's damage from previous session.";
+				property = "Bax_Persist_LoadObjectDamage";
+				defaultValue = "true";
+			};
+
+			class EnableObjectFuel: Checkbox {
+				displayName = "Object Fuel";
+				tooltip = "Whether or not to load an object's fuel from previous session.";
+				property = "Bax_Persist_LoadObjectFuel";
+				defaultValue = "true";
+			};
+
+			class SubCategoryVariables {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Variables Persistence Settings";
+			};
+
+			class EnableVariablesDB: Checkbox {
+				displayName = "Variables Database";
+				tooltip = "Enables loading of mission namespace variables from previous sessions.";
+				property = "Bax_Persist_LoadVariablesDatabase";
 				defaultValue = "true";
 			};
 
@@ -152,7 +210,7 @@ class CfgVehicles {
 		category = "Bax_Persist";
 
 		function = "bax_persist_fnc_moduleRegisterInventoryObject";
-		functionPriority = 0;
+		functionPriority = 20;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
@@ -164,18 +222,18 @@ class CfgVehicles {
 				defaultValue = "''";
 			};
 
-			class LoadOnly: Checkbox {
-				displayName = "Only Load/Disable Register";
-				tooltip = "Do not register object for saving the inventory. Useful for loading saved inventories meant to be repeatedly loaded.";
-				property = "Bax_Persist_LoadOnly";
-				defaultValue = "true";
+			class ResetInventory: Checkbox {
+				displayName = "Reset Inventory";
+				tooltip = "Instead of loading the inventory from the database, set the saved inventory to the inventory of the object. Does nothing if there is no record for the given ID yet.";
+				property = "Bax_Persist_ResetInventory";
+				defaultValue = "false";
 			};
 
 			class ModuleDescription: ModuleDescription {};
 		};
 
 		class ModuleDescription: ModuleDescription {
-			description = "Register this object's inventory for saving under a unique ID. This does not save this object.";
+			description = "Register this object's inventory for saving under a unique ID. This does not save this object. Useful for saving and loading a player locker or similar systems. This module is included mainly for convenience as the inventory database is designed to be used by scripts rather than this module.";
 		};
 	};
 
@@ -186,16 +244,58 @@ class CfgVehicles {
 		category = "Bax_Persist";
 
 		function = "bax_persist_fnc_moduleRegisterObject";
-		functionPriority = 0;
+		functionPriority = 20;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
 		class Attributes: AttributesBase {
+			class ObjectID: Edit {
+				displayNAme = "Inventory ID";
+				tooltip = "Unique ID that is used for saving and loading an object. If a persistent object with this ID already exists, this ""loads"" the object and prevents it from being loaded a second time.";
+				property = "Bax_Persist_ObjectId";
+				defaultValue = "''";
+			};
+
+			class ResetPosition: Checkbox {
+				displayName = "Reset Position";
+				tooltip = "Do not load the object's position from the object database.";
+				property = "Bax_Persist_ResetPosition";
+				defaultValue = "false";
+			};
+
+			class ResetInventory: Checkbox {
+				displayName = "Reset Inventory";
+				tooltip = "Do not load the object's inventory from the object database.";
+				property = "Bax_Persist_ResetInventory";
+				defaultValue = "false";
+			};
+
+			class ResetDamage: Checkbox {
+				displayName = "Reset Damage";
+				tooltip = "Do not load the object's damage from the object database.";
+				property = "Bax_Persist_ResetDamage";
+				defaultValue = "false";
+			};
+
+			class ResetFuel: Checkbox {
+				displayName = "Reset Fuel";
+				tooltip = "Do not load the object's fuel from the object database. Does not apply for anything that does not have fuel.";
+				property = "Bax_Persist_ResetFuel";
+				defaultValue = "false";
+			};
+
+			class ReviveObject: Checkbox {
+				displayName = "Revive Object";
+				tooltip = "If the object is dead, respawn it. A dead object is stored, but does not respawn. Inventories of dead objects are not stored, so the new object's inventory is used when respawning an object.";
+				property = "Bax_Persist_ReviveObject";
+				defaultValue = "false";
+			};
+
 			class ModuleDescription: ModuleDescription {};
 		};
 
 		class ModuleDescription: ModuleDescription {
-			description = "Register this object for saving.";
+			description = "Register this object for saving. Does not work with units. You can safely reuse this on an added object from a previous mission. The options here allow you adjust some of the recorded data for the object, such as resetting the position can be used to bring a vehicle back to base.";
 		};
 	};
 
@@ -206,44 +306,109 @@ class CfgVehicles {
 		category = "Bax_Persist";
 
 		function = "bax_persist_fnc_moduleRegisterVariables";
-		functionPriority = 0;
+		functionPriority = 20;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
 		class Attributes: AttributesBase {
-			class Var1: Edit {
-				displayName = "Variable";
+			class SubCategoryVariable1 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 1";
+			};
+
+			class Variable1: Edit {
+				displayName = "Variable 1";
 				tooltip = "MissionNamespace Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var1";
+				property = "Bax_Persist_Variable1";
 				defaultValue = "''";
 			};
 
-			class Var2: Edit {
-				displayName = "Variable";
+			class DefaultValue1: Edit {
+				displayName = "Default Value 1";
+				tooltip = "Default value to be used if the mission namespace variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue1";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable2 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 2";
+			};
+
+			class Variable2: Edit {
+				displayName = "Variable 2";
 				tooltip = "MissionNamespace Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var2";
+				property = "Bax_Persist_Variable2";
 				defaultValue = "''";
 			};
 
-			class Var3: Edit {
-				displayName = "Variable";
+			class DefaultValue2: Edit {
+				displayName = "Default Value 2";
+				tooltip = "Default value to be used if the mission namespace variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue2";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable3 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 3";
+			};
+
+			class Variable3: Edit {
+				displayName = "Variable 3";
 				tooltip = "MissionNamespace Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var3";
+				property = "Bax_Persist_Variable3";
 				defaultValue = "''";
 			};
 
-			class Var4: Edit {
-				displayName = "Variable";
+			class DefaultValue3: Edit {
+				displayName = "Default Value 3";
+				tooltip = "Default value to be used if the mission namespace variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue3";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable4 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 4";
+			};
+
+			class Variable4: Edit {
+				displayName = "Variable 4";
 				tooltip = "MissionNamespace Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var4";
+				property = "Bax_Persist_Variable4";
 				defaultValue = "''";
 			};
 
-			class Var5: Edit {
-				displayName = "Variable";
+			class DefaultValue4: Edit {
+				displayName = "Default Value 4";
+				tooltip = "Default value to be used if the mission namespace variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue4";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable5 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 5";
+			};
+
+			class Variable5: Edit {
+				displayName = "Variable 5";
 				tooltip = "MissionNamespace Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var5";
+				property = "Bax_Persist_Variable5";
 				defaultValue = "''";
+			};
+
+			class DefaultValue5: Edit {
+				displayName = "Default Value 5";
+				tooltip = "Default value to be used if the mission namespace variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue5";
+				defaultValue = "'nil'";
 			};
 
 			class ModuleDescription: ModuleDescription {};
@@ -261,44 +426,109 @@ class CfgVehicles {
 		category = "Bax_Persist";
 
 		function = "bax_persist_fnc_moduleRegisterVariable";
-		functionPriority = 0;
+		functionPriority = 20;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
 		class Attributes: AttributesBase {
-			class Var1: Edit {
-				displayName = "Variable";
+			class SubCategoryVariable1 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 1";
+			};
+
+			class Variable1: Edit {
+				displayName = "Variable 1";
 				tooltip = "Player Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var1";
+				property = "Bax_Persist_Variable1";
 				defaultValue = "''";
 			};
 
-			class Var2: Edit {
-				displayName = "Variable";
+			class DefaultValue1: Edit {
+				displayName = "Default Value 1";
+				tooltip = "Default value to be used if the player variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue1";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable2 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 2";
+			};
+
+			class Variable2: Edit {
+				displayName = "Variable 2";
 				tooltip = "Player Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var2";
+				property = "Bax_Persist_Variable2";
 				defaultValue = "''";
 			};
 
-			class Var3: Edit {
-				displayName = "Variable";
+			class DefaultValue2: Edit {
+				displayName = "Default Value 2";
+				tooltip = "Default value to be used if the player variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue2";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable3 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 3";
+			};
+
+			class Variable3: Edit {
+				displayName = "Variable 3";
 				tooltip = "Player Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var3";
+				property = "Bax_Persist_Variable3";
 				defaultValue = "''";
 			};
 
-			class Var4: Edit {
-				displayName = "Variable";
+			class DefaultValue3: Edit {
+				displayName = "Default Value 3";
+				tooltip = "Default value to be used if the player variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue3";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable4 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 4";
+			};
+
+			class Variable4: Edit {
+				displayName = "Variable 4";
 				tooltip = "Player Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var4";
+				property = "Bax_Persist_Variable4";
 				defaultValue = "''";
 			};
 
-			class Var5: Edit {
-				displayName = "Variable";
+			class DefaultValue4: Edit {
+				displayName = "Default Value 4";
+				tooltip = "Default value to be used if the player variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue4";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable5 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 5";
+			};
+
+			class Variable5: Edit {
+				displayName = "Variable 5";
 				tooltip = "Player Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var5";
+				property = "Bax_Persist_Variable5";
 				defaultValue = "''";
+			};
+
+			class DefaultValue5: Edit {
+				displayName = "Default Value 5";
+				tooltip = "Default value to be used if the player variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue5";
+				defaultValue = "'nil'";
 			};
 
 			class ModuleDescription: ModuleDescription {};
@@ -316,44 +546,109 @@ class CfgVehicles {
 		category = "Bax_Persist";
 
 		function = "bax_persist_fnc_moduleRegisterVariable";
-		functionPriority = 0;
+		functionPriority = 20;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
 		class Attributes: AttributesBase {
-			class Var1: Edit {
-				displayName = "Variable";
+			class SubCategoryVariable1 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 1";
+			};
+
+			class Variable1: Edit {
+				displayName = "Variable 1";
 				tooltip = "Object Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var1";
+				property = "Bax_Persist_Variable1";
 				defaultValue = "''";
 			};
 
-			class Var2: Edit {
-				displayName = "Variable";
+			class DefaultValue1: Edit {
+				displayName = "Default Value 1";
+				tooltip = "Default value to be used if the object variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue1";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable2 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 2";
+			};
+
+			class Variable2: Edit {
+				displayName = "Variable 2";
 				tooltip = "Object Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var2";
+				property = "Bax_Persist_Variable2";
 				defaultValue = "''";
 			};
 
-			class Var3: Edit {
-				displayName = "Variable";
+			class DefaultValue2: Edit {
+				displayName = "Default Value 2";
+				tooltip = "Default value to be used if the object variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue2";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable3 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 3";
+			};
+
+			class Variable3: Edit {
+				displayName = "Variable 3";
 				tooltip = "Object Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var3";
+				property = "Bax_Persist_Variable3";
 				defaultValue = "''";
 			};
 
-			class Var4: Edit {
-				displayName = "Variable";
+			class DefaultValue3: Edit {
+				displayName = "Default Value 3";
+				tooltip = "Default value to be used if the object variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue3";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable4 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 4";
+			};
+
+			class Variable4: Edit {
+				displayName = "Variable 4";
 				tooltip = "Object Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var4";
+				property = "Bax_Persist_Variable4";
 				defaultValue = "''";
 			};
 
-			class Var5: Edit {
-				displayName = "Variable";
+			class DefaultValue4: Edit {
+				displayName = "Default Value 4";
+				tooltip = "Default value to be used if the object variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue4";
+				defaultValue = "'nil'";
+			};
+
+			class SubCategoryVariable5 {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Entry 5";
+			};
+
+			class Variable5: Edit {
+				displayName = "Variable 5";
 				tooltip = "Object Variable to be saved and loaded in the future. If empty, then do nothing.";
-				property = "Bax_Persist_Var5";
+				property = "Bax_Persist_Variable5";
 				defaultValue = "''";
+			};
+
+			class DefaultValue5: Edit {
+				displayName = "Default Value 5";
+				tooltip = "Default value to be used if the object variable does not exist. Use 'nil' to disable default value.";
+				property = "Bax_Persist_DefaultValue5";
+				defaultValue = "'nil'";
 			};
 
 			class ModuleDescription: ModuleDescription {};
@@ -361,6 +656,25 @@ class CfgVehicles {
 
 		class ModuleDescription: ModuleDescription {
 			description = "Object variables to be saved and loaded on the next mission start. To keep variables being saved, you must define this every mission.";
+		};
+	};
+};
+
+class ctrlMenuStrip;
+class display3DEN {
+	class Controls {
+		class MenuStrip: ctrlMenuStrip {
+			class Items {
+				class Tools {
+					items[] += { "Bax_Persist_LoadPreview" };
+				};
+				class Bax_Persist_LoadPreview {
+					text = "[Persist] Load Saved Objects";
+					// picture = "";
+					action = "[] call bax_persist_fnc_load3denPreview";
+					opensNewWindow = 0;
+				};
+			};
 		};
 	};
 };

@@ -1,9 +1,16 @@
 
+if !(bax_persist_loadVariablesDatabase) exitWith {};
+
 params ["_databaseVariables"];
 
 private ["_variable", "_value"];
 
 {
-	_x params ["_variable", "_value"];
-	missionNamespace setVariable [_variable, _value, true];
+	_variable = _x;
+	_value = _y;
+	if (isNil "_value") then {
+		missionNamespace setVariable [_variable, nil];
+	} else {
+		missionNamespace setVariable [_variable, _value];
+	};
 } forEach _databaseVariables;

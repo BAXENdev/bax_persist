@@ -1,7 +1,7 @@
 
-params ["_object"];
+privateAll;
 
-private ["_items", "_magazines", "_weapons", "_backpacks", "_inventories", "_inventory"];
+params ["_object"];
 
 _items = [];
 _magazines = [];

@@ -11,7 +11,9 @@ if !(bax_persist_isLoaded) exitWith {
 
 params ["_id", "_object"];
 
-private ["_inventory"];
+privateAll
 
-_inventory = bax_persist_databaseInventories getOrDefault [_id, [[], [], [], [], []]];
-[_object, _inventory] call bax_persist_fnc_deserializeObjectInventory;
+_inventory = bax_persist_databaseInventories get _id;
+if !(isNil "_inventory") exitWith {
+	[_object, _inventory] call bax_persist_fnc_deserializeObjectInventory;
+};

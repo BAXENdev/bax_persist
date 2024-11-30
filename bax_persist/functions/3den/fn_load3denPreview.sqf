@@ -1,0 +1,2 @@
+
+if !(isMissionProfileNamespaceLoaded) exitWith {};

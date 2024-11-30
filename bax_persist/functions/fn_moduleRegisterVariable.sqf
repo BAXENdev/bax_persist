@@ -4,13 +4,29 @@ _units = _this param [1,[],[[]]];
 _activated = _this param [2,true,[true]];
 
 if (_activated) then {
-	private ["_var1", "_var2", "_var3", "_var4", "_var5", "_varArray"];
+	private [
+		"_variable1", "_defaultValue1",
+		"_variable2", "_defaultValue2",
+		"_variable3", "_defaultValue3",
+		"_variable4", "_defaultValue4",
+		"_variable5", "_defaultValue5",
+		"_varArray"
+	];
 
-	_var1 = _logic getVariable ["Var1", ""];
-	_var2 = _logic getVariable ["Var2", ""];
-	_var3 = _logic getVariable ["Var3", ""];
-	_var4 = _logic getVariable ["Var4", ""];
-	_var5 = _logic getVariable ["Var5", ""];
+	_variable1 = _logic getVariable ["Variable1", ""];
+	_defaultValue1 = call compile (_logic getVariable ["DefaultValue1", "nil"]);
+
+	_variable2 = _logic getVariable ["Variable2", ""];
+	_defaultValue2 = call compile (_logic getVariable ["DefaultValue2", "nil"]);
+
+	_variable3 = _logic getVariable ["Variable3", ""];
+	_defaultValue3 = call compile (_logic getVariable ["DefaultValue3", "nil"]);
+
+	_variable4 = _logic getVariable ["Variable4", ""];
+	_defaultValue4 = call compile (_logic getVariable ["DefaultValue4", "nil"]);
+
+	_variable5 = _logic getVariable ["Variable5", ""];
+	_defaultValue5 = call compile (_logic getVariable ["DefaultValue5", "nil"]);
 
 	_varArray = switch (typeOf _logic) do {
 		case ("Module_Bax_Persist_RegisterVariable"): { bax_persist_registeredNamespaceVariables };
@@ -18,11 +34,41 @@ if (_activated) then {
 		case ("Module_Bax_Persist_RegisterObjectVariable"): { bax_persist_registeredObjectVariables };
 	};
 
-	if (_var1 isNotEqualTo "") do { _varArray pushBack _var1 };
-	if (_var2 isNotEqualTo "") do { _varArray pushBack _var2 };
-	if (_var3 isNotEqualTo "") do { _varArray pushBack _var3 };
-	if (_var4 isNotEqualTo "") do { _varArray pushBack _var4 };
-	if (_var5 isNotEqualTo "") do { _varArray pushBack _var5 };
+	if (_variable1 isNotEqualTo "") then {
+		if (isNil "_defaultValue1") then {
+			_varArray pushBack [_variable1, nil];
+		} else {
+			_varArray pushBack [_variable1, _defaultValue1];
+		};
+	};
+	if (_variable2 isNotEqualTo "") then {
+		if (isNil "_defaultValue2") then {
+			_varArray pushBack [_variable2, nil];
+		} else {
+			_varArray pushBack [_variable2, _defaultValue2];
+		};
+	};
+	if (_variable3 isNotEqualTo "") then {
+		if (isNil "_defaultValue3") then {
+			_varArray pushBack [_variable3, nil];
+		} else {
+			_varArray pushBack [_variable3, _defaultValue3];
+		};
+	};
+	if (_variable4 isNotEqualTo "") then {
+		if (isNil "_defaultValue4") then {
+			_varArray pushBack [_variable4, nil];
+		} else {
+			_varArray pushBack [_variable4, _defaultValue4];
+		};
+	};
+	if (_variable5 isNotEqualTo "") then {
+		if (isNil "_defaultValue5") then {
+			_varArray pushBack [_variable5, nil];
+		} else {
+			_varArray pushBack [_variable5, _defaultValue5];
+		};
+	};
 };
 
 true;
