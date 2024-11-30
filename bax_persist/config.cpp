@@ -666,12 +666,22 @@ class display3DEN {
 		class MenuStrip: ctrlMenuStrip {
 			class Items {
 				class Tools {
-					items[] += { "Bax_Persist_LoadPreview" };
+					items[] += { "Bax_Persist_Folder" };
+				};
+				class Bax_Persist_Folder {
+					text = "Persistence";
+					items[] += { "Bax_Persist_LoadPreview", "Bax_Persist_OpenDBManager" };
 				};
 				class Bax_Persist_LoadPreview {
 					text = "[Persist] Load Saved Objects";
-					// picture = "";
+					picture = "";
 					action = "[] call bax_persist_fnc_load3denPreview";
+					opensNewWindow = 0;
+				};
+				class Bax_Persist_OpenDBManager {
+					text = "Open Database Manager";
+					picture = "";
+					action = "";
 					opensNewWindow = 0;
 				};
 			};

@@ -9,6 +9,7 @@ if (bax_persist_loadPlayerKeyRole) then {
 	_id = _id + "_" + (str roleDescription _player);
 };
 
+_name = name _player;
 _loadout = getUnitLoadout _player;
 _traits = [
 	_player getVariable ["ace_medical_medicClass", 0],
@@ -35,6 +36,7 @@ _variables = [];
 bax_persist_databasePlayers set [
 	_id,
 	[
+		_name,
 		_loadout,
 		_traits,
 		_posDir,

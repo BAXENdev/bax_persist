@@ -19,7 +19,7 @@ if (bax_persist_loadPlayerKeyRole) then {
 _playerRecord = bax_persist_databasePlayers get _id;
 if (isNil "_playerRecord") then exitWith {};
 
-_playerRecord params ["_loadout", "_traits", "_posDir", "_medical", "_variables"];
+_playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables"];
 
 _player setUnitLoadout _loadout;
 
