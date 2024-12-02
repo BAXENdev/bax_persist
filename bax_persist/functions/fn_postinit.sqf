@@ -1,21 +1,46 @@
 
-if (hasInterface) then {
-	[
-		{ !isNull player and bax_persist_isLoaded },
-		{ _this remoteExec ["bax_persist_fnc_requestPlayerLoad", 2] },
-		[player]
-	] call CBA_fnc_waitUntilAndExecute;
-};
+if (is3DEN) exitWith {};
 
 if !(isServer) exitWith {};
+
+// Multiplayer only
+addMissionEventHandler [
+	"PlayerConnected",
+	{
+		// https://community.bistudio.com/wiki/getUserInfo
+		params ["_directPlayId", "_steamId", "_name", "_jip", "_owner", "_idstr"];
+		
+		if !(bax_persist_loadPlayerDatabase) exitWith {};
+
+		_scriptHandle = [str _directPlayId, _steamId] spawn {
+			params ["_directPlayId", "_steamId"];
+
+			_playerObject = objNull;
+			waitUntil {
+				_playerObject = _directPlayId getUserInfo 10;
+				if (isNil "_playerObject") exitWith { // player disconnected before getting a player object
+					terminate _thisScript;
+				};
+				!isNull _playerObject and { isPlayer _playerObject };
+			};
+			
+			[_steamId, _playerObject] call bax_persist_fnc_loadPlayer;
+		};
+	}
+];
+// Singlerplayer. Player UID is _SP_PLAYER_
+if (!isMultiplayer) then {
+	[getPlayerUID player, player] call bax_persist_fnc_loadPlayer;
+};
+
 
 addMissionEventHandler [
 	"HandleDisconnect",
 	{
-		params ["_unit", "_id", "_uid", "_name"];
-		// TODO: Does getPlayerUID still work on a disconnecting unit?
-		// If so, remove ID param...
-		[_uid, _unit] call bax_persist_fnc_savePlayerToDatabase;
+		params ["_player", "_id", "_steamId", "_name"];
+		
+		if !(bax_persist_loadPlayerDatabase) exitWith {};
+		[_steamId, _player] call bax_persist_fnc_savePlayer;
 	}
 ];
 
@@ -29,6 +54,11 @@ addMissionEventHandler [
 	}
 ];
 
-[] call bax_persist_fnc_queueSaveDatabase;
+if (bax_persist_autosaveEnabled) then {
+	[] call bax_persist_fnc_queueSaveDatabase;
+};
 
-missionNamespace setVariable ["bax_persist_isLoaded", true, true];
+[] call bax_persist_fnc_loadDatabaseObjects;
+[] call bax_persist_fnc_loadDatabaseVariables;
+
+["bax_persist_loadDatabase", []] call CBA_fnc_localEvent;

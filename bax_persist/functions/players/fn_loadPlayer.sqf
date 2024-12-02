@@ -1,23 +1,36 @@
 
-if !(bax_persist_loadPlayerDatabase) exitWith {};
 
-if !(canSuspend) exitWith { _this spawn bax_persist_fnc_requestPlayerLoad; };
-
-params ["_player"];
-
-waitUntil { isPlayer _player };
-
-_id = getPlayerUID _player;
-
-if (bax_persist_loadPlayerKeySide) then {
-	_id = _id + "_" + (str side group _player);
+if !(isServer) exitWith {
+	// return
+	false
 };
-if (bax_persist_loadPlayerKeyRole) then {
-	_id = _id + "_" + (str roleDescription _player);
+
+if !(bax_persist_loadPlayerDatabase) exitWith {
+	false;
+};
+
+params ["_id", "_player"];
+
+_excludeLoading = _player getVariable ["bax_persist_excludeLoading", false];
+if (_excludeLoading) exitWith {
+	// return
+	false;
+};
+
+if (_id isEqualType "") then {
+	if (bax_persist_loadPlayerKeySide) then {
+		_id = _id + "_" + (str side group _player);
+	};
+	if (bax_persist_loadPlayerKeyRole) then {
+		_id = _id + "_" + (str roleDescription _player);
+	};
 };
 
 _playerRecord = bax_persist_databasePlayers get _id;
-if (isNil "_playerRecord") then exitWith {};
+if (isNil "_playerRecord") exitWith {
+	// return
+	false;
+};
 
 _playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables"];
 
@@ -31,12 +44,20 @@ _player setUnitTrait ["Engineer", _engineerTrait > 0];
 
 if (bax_persist_loadPlayerPosition) then {
 	_posDir params ["_position", "_direction"];
-	_player setPos _position;
+	_player setPosATL _position;
 	_player setDir _direction;
 };
 
 {
+	_variable = _x;
+	_defaultValue = _y;
+
+	_player setVariable [_variable, _defaultValue, true];
+} forEach bax_persist_registeredPlayerVariables;
+
+{
 	_x params ["_variable", "_value"];
+
 	_player setVariable [_variable, _value, true];
 } forEach _variables;
 
@@ -47,3 +68,6 @@ if (_medical isEqualTo "dead") then {
 		[_player, _medical] call ace_medical_fnc_deserializeState;
 	};
 };
+
+// return
+true;

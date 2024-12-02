@@ -14,43 +14,19 @@ class CfgPatches {
 
 class CfgFunctions {
 	class Bax_Persist {
-		class functions {
-			file = "\bax_persist\functions";
-			class deserializeObjectInventory {};
-			class loadDatabaseObjects {};
-			class loadDatabaseVariables {};
-			class moduleInitializePersist {};
-			class moduleRegisterInventoryObject {};
-			class moduleRegisterObject {};
-			class moduleRegisterVariable {};
-			class postinit {};
-			class preinit {};
-			class queueSaveDatabase {};
-			class registerInventoryObject {};
-			class requestInventoryLoad {};
-			class requestInventorySave {};
-			class requestPlayerLoad {};
-			class saveDatabase {};
-			class saveDatabaseInventories {};
-			class saveDatabaseObjects {};
-			class saveDatabasePlayers {};
-			class saveDatabaseVariables {};
-			class savePlayerToDatabase {};
-			class serializeObjectInventory {};
-			class zeusSaveDatabase {};
-		};
+		#include "\bax_persist\functions\categories.hpp"
 	};
 };
 
 class Extended_Preinit_EventHandlers {
 	class Bax_Persist {
-		init = "call bax_persist_fnc_preinit";
+		init = "[] call bax_persist_fnc_preinit";
 	};
 };
 
 class Extended_Postinit_EventHandlers {
 	class Bax_Persist {
-		init = "call bax_persist_fnc_postinit";
+		init = "[] call bax_persist_fnc_postinit";
 	};
 };
 
@@ -112,6 +88,13 @@ class CfgVehicles {
 				typeName = "NUMBER";
 			};
 
+			class EnableAutosave: Checkbox {
+				displayName = "Enable Autosave";
+				tooltip = "Enables Autosaving";
+				property = "Bax_Persist_EnableAutosave";
+				defaultValue = "true";
+			};
+
 			// TODO: Combo box for selecting namespace. Do I offer profileNamespace?
 
 			class SubCategoryPlayer {
@@ -142,17 +125,17 @@ class CfgVehicles {
 			};
 
 			class EnablePlayerKeySide: Checkbox {
-				displayName = "Enable Side Keying";
+				displayName = "Side Keying";
 				tooltip = "Player data is saved based on their side. Enabling side keying at later date will not load the previous un-sided data.";
 				property = "Bax_Persist_LoadPlayerKeySide";
-				defaultValue = "true";
+				defaultValue = "false";
 			};
 
 			class EnablePlayerKeyRole: Checkbox {
-				displayName = "Load Player Database";
+				displayName = "Role Keying";
 				tooltip = "Player data is saved based on their role. Enabling role keying at later date will not load the previous un-roled data.";
 				property = "Bax_Persist_LoadPlayerKeyRole";
-				defaultValue = "true";
+				defaultValue = "false";
 			};
 
 			class SubCategoryObject {
@@ -182,6 +165,13 @@ class CfgVehicles {
 				defaultValue = "true";
 			};
 
+			class EnableObjectAmmo: Checkbox {
+				displayName = "Object Ammo";
+				tooltip = "Whether or not to load an object's ammo from previous session.";
+				property = "Bax_Persist_LoadObjectAmmo";
+				defaultValue = "true";
+			};
+
 			class SubCategoryVariables {
 				data = "AttributeSystemSubcategory";
 				control = "SubCategory";
@@ -203,40 +193,6 @@ class CfgVehicles {
 		};
 	};
 
-	class Module_Bax_Persist_RegisterInventoryObject: Module_F {
-		scope = 2;
-		displayName = "Register Inventory Object";
-		// icon = "";
-		category = "Bax_Persist";
-
-		function = "bax_persist_fnc_moduleRegisterInventoryObject";
-		functionPriority = 20;
-		isGlobal = 0;
-		isTriggerActivated = 0;
-		isDisposable = 0;
-		class Attributes: AttributesBase {
-			class InventoryID: Edit {
-				displayNAme = "Inventory ID";
-				tooltip = "Unique ID that is used for saving and loading an inventory.";
-				property = "Bax_Persist_InventoryId";
-				defaultValue = "''";
-			};
-
-			class ResetInventory: Checkbox {
-				displayName = "Reset Inventory";
-				tooltip = "Instead of loading the inventory from the database, set the saved inventory to the inventory of the object. Does nothing if there is no record for the given ID yet.";
-				property = "Bax_Persist_ResetInventory";
-				defaultValue = "false";
-			};
-
-			class ModuleDescription: ModuleDescription {};
-		};
-
-		class ModuleDescription: ModuleDescription {
-			description = "Register this object's inventory for saving under a unique ID. This does not save this object. Useful for saving and loading a player locker or similar systems. This module is included mainly for convenience as the inventory database is designed to be used by scripts rather than this module.";
-		};
-	};
-
 	class Module_Bax_Persist_RegisterObject: Module_F {
 		scope = 2;
 		displayName = "Register Object";
@@ -250,7 +206,7 @@ class CfgVehicles {
 		isDisposable = 0;
 		class Attributes: AttributesBase {
 			class ObjectID: Edit {
-				displayNAme = "Inventory ID";
+				displayNAme = "Object ID";
 				tooltip = "Unique ID that is used for saving and loading an object. If a persistent object with this ID already exists, this ""loads"" the object and prevents it from being loaded a second time.";
 				property = "Bax_Persist_ObjectId";
 				defaultValue = "''";
@@ -284,10 +240,10 @@ class CfgVehicles {
 				defaultValue = "false";
 			};
 
-			class ReviveObject: Checkbox {
-				displayName = "Revive Object";
-				tooltip = "If the object is dead, respawn it. A dead object is stored, but does not respawn. Inventories of dead objects are not stored, so the new object's inventory is used when respawning an object.";
-				property = "Bax_Persist_ReviveObject";
+			class ResetAmmo: Checkbox {
+				displayName = "Reset Ammo";
+				tooltip = "Do not load the object's ammo from the object database. Pylons are still loaded, but all default mags are left in the vehicle.";
+				property = "Bax_Persist_ResetAmmo";
 				defaultValue = "false";
 			};
 
@@ -296,6 +252,40 @@ class CfgVehicles {
 
 		class ModuleDescription: ModuleDescription {
 			description = "Register this object for saving. Does not work with units. You can safely reuse this on an added object from a previous mission. The options here allow you adjust some of the recorded data for the object, such as resetting the position can be used to bring a vehicle back to base.";
+		};
+	};
+
+	class Module_Bax_Persist_RegisterInventory: Module_F {
+		scope = 2;
+		displayName = "Register Inventory";
+		// icon = "";
+		category = "Bax_Persist";
+
+		function = "bax_persist_fnc_moduleRegisterInventory";
+		functionPriority = 20;
+		isGlobal = 0;
+		isTriggerActivated = 0;
+		isDisposable = 0;
+		class Attributes: AttributesBase {
+			class InventoryID: Edit {
+				displayNAme = "Inventory ID";
+				tooltip = "Unique ID that is used for saving and loading an inventory.";
+				property = "Bax_Persist_InventoryId";
+				defaultValue = "''";
+			};
+
+			class ResetInventory: Checkbox {
+				displayName = "Reset Inventory";
+				tooltip = "Instead of loading the inventory from the database, set the saved inventory to the inventory of the object. Does nothing if there is no record for the given ID yet.";
+				property = "Bax_Persist_ResetInventory";
+				defaultValue = "false";
+			};
+
+			class ModuleDescription: ModuleDescription {};
+		};
+
+		class ModuleDescription: ModuleDescription {
+			description = "Register this object's inventory for saving under a unique ID. This does not save this object. Useful for saving and loading a player locker or similar systems. This module is included mainly for convenience as the inventory database is designed to be used by scripts rather than this module.";
 		};
 	};
 
@@ -673,15 +663,15 @@ class display3DEN {
 					items[] += { "Bax_Persist_LoadPreview", "Bax_Persist_OpenDBManager" };
 				};
 				class Bax_Persist_LoadPreview {
-					text = "[Persist] Load Saved Objects";
+					text = "Load Saved Objects";
 					picture = "";
 					action = "[] call bax_persist_fnc_load3denPreview";
 					opensNewWindow = 0;
 				};
 				class Bax_Persist_OpenDBManager {
-					text = "Open Database Manager";
+					text = "Open Database Manager [TBD]";
 					picture = "";
-					action = "";
+					action = "[] call bax_persist_fnc_openDBManager";
 					opensNewWindow = 0;
 				};
 			};

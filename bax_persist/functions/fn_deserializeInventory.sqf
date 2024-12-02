@@ -35,5 +35,5 @@ _sortedInventories = [_inventories, [], { _x select 0 }] call BIS_fnc_sortBy;
 {
 	_container = _x select 1;
 	_inventory = _sortedInventories select _forEachIndex select 1;
-	[_container, _inventory] call bax_persist_fnc_deserializeObjectInventory;
+	[_container, _inventory] call bax_persist_fnc_deserializeInventory;
 } forEach _sortedContainers;

@@ -1,12 +1,24 @@
 
+if !(isServer) exitWith {
+	// return
+	false
+};
+
 params ["_id", "_player"];
 
-// _id = getPlayerUID _player;
-if (bax_persist_loadPlayerKeySide) then {
-	_id = _id + "_" + (str side group _player);
+_excludeSaving = _player getVariable ["bax_persist_excludeSaving", false];
+if (_excludeSaving) exitWith {
+	// return
+	false;
 };
-if (bax_persist_loadPlayerKeyRole) then {
-	_id = _id + "_" + (str roleDescription _player);
+
+if (_id isEqualType "") then {
+	if (bax_persist_loadPlayerKeySide) then {
+		_id = _id + "_" + (str side group _player);
+	};
+	if (bax_persist_loadPlayerKeyRole) then {
+		_id = _id + "_" + (str roleDescription _player);
+	};
 };
 
 _name = name _player;
@@ -15,11 +27,12 @@ _traits = [
 	_player getVariable ["ace_medical_medicClass", 0],
 	_player getVariable ["ACE_isEngineer", 0]
 ];
-_posDir = [getPos _player, getDir _player];
+_posDir = [getPosATL _player, getDir _player];
 _medical = [_player] call ace_medical_fnc_serializeState;
 if !(alive _player) then {
 	_medical = "dead";
 };
+
 _variables = [];
 {
 	_x params ["_variable", "_defaultValue"];
@@ -44,3 +57,6 @@ bax_persist_databasePlayers set [
 		_variables
 	]
 ];
+
+// return
+true;

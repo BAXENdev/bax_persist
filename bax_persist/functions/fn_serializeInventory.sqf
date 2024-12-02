@@ -1,7 +1,7 @@
 
-privateAll;
-
 params ["_object"];
+
+private ["_items", "_magazines", "_weapons", "_backpacks", "_inventories"];
 
 _items = [];
 _magazines = [];
@@ -74,7 +74,7 @@ _containers = everyContainer _object;
 
 _containers apply {
 	_x params ["_class", "_object"];
-	_objectInventory = [_object] call bax_persist_fnc_serializeObjectInventory;
+	_objectInventory = [_object] call bax_persist_fnc_serializeInventory;
 	_inventories pushBack [_class, _objectInventory];
 };
 
