@@ -1,0 +1,10 @@
+
+[ ]: Add player reset value similar to object spawned value for mid mission rejoins
+[ ]: Create a persistent area
+[ ]: For setting pos, ASL vs ATL?
+- Advanced detection for objects floating in the air?
+- Floating objects over water?
+- Add snapping for floating objects?
+[ ]: Add destroyed terrain building objects persistence
+[ ]: VIV Persistence? How? Add VIV keying: [Carrying IDs, Carried ID] If carried ID is not empty, then do not manually spawn. 3den ViV command? None rn
+[ ]: OPbject unique attribute persistence: Textures, vehicle part collection, other 3den attributes, RRR stats, ace options

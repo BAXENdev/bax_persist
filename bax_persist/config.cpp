@@ -4,7 +4,14 @@ class CfgPatches {
 		name = "BAXEN's Persist";
 		author = "BAXENATOR";
 		units[] = {
-
+			"Module_Bax_Persist_InitializePersist",
+			"Module_Bax_Persist_RegisterObject",
+			"Module_Bax_Persist_RegisterInventory",
+			"Module_Bax_Persist_RegisterVariable",
+			"Module_Bax_Persist_RegisterPlayerVariable",
+			"Module_Bax_Persist_RegisterObjectVariable",
+			"Module_Bax_Persist_WhitelistSpawnArea",
+			"Module_Bax_Persist_WhitelistTeleport"
 		};
 		requiredVersion = 1.0;
 		requiredAddons[] = {"ace_medical", "cba_main"};
@@ -29,6 +36,14 @@ class Extended_Postinit_EventHandlers {
 		init = "[] call bax_persist_fnc_postinit";
 	};
 };
+
+// class Extended_Init_EventHandlers {
+// 	class All {
+// 		class Bax_Persist {
+// 			init = "_this call bax_persist_fnc_initObjectPersist";
+// 		};
+// 	};
+// };
 
 class CfgFactionClasses {
 	class NO_CATEGORY;
@@ -70,17 +85,17 @@ class CfgVehicles {
 			class SubCategorySaving {
 				data = "AttributeSystemSubcategory";
 				control = "SubCategory";
-				displayName = "Player Persistence Settings";
+				displayName = "Save Settings";
 			};
 
-			class EnableSaving: Checkbox {
+			class Bax_Persist_EnableSaving: Checkbox {
 				displayName = "Saving Enabled";
 				tooltip = "Enables saving the mission. All 3den instances do not allow saving the database.";
 				property = "Bax_Persist_EnableSaving";
 				defaultValue = "true";
 			};
 
-			class AutosaveTimer: Edit {
+			class Bax_Persist_AutosaveTimer: Edit {
 				displayName = "Autosave Timer";
 				tooltip = "How often autosaving occurs. min=15 | max=120 in minutes.";
 				property = "Bax_Persist_AutosaveTimer";
@@ -88,14 +103,12 @@ class CfgVehicles {
 				typeName = "NUMBER";
 			};
 
-			class EnableAutosave: Checkbox {
+			class Bax_Persist_EnableAutosave: Checkbox {
 				displayName = "Enable Autosave";
 				tooltip = "Enables Autosaving";
 				property = "Bax_Persist_EnableAutosave";
 				defaultValue = "true";
 			};
-
-			// TODO: Combo box for selecting namespace. Do I offer profileNamespace?
 
 			class SubCategoryPlayer {
 				data = "AttributeSystemSubcategory";
@@ -103,35 +116,42 @@ class CfgVehicles {
 				displayName = "Player Persistence Settings";
 			};
 
-			class EnablePlayerDB: Checkbox {
+			class Bax_Persist_LoadPlayerDatabase: Checkbox {
 				displayName = "Player Database";
 				tooltip = "Enables loading of player data from previous sessions.";
 				property = "Bax_Persist_LoadPlayerDatabase";
 				defaultValue = "true";
 			};
 
-			class EnablePlayerPosition: Checkbox {
-				displayName = "Player Position";
-				tooltip = "Whether or not to load player's previous position";
-				property = "Bax_Persist_LoadPlayerPosition";
-				defaultValue = "true";
+			class Bax_Persist_ResetPlayerLoadout: Checkbox {
+				displayName = "Reset Player Loadout";
+				tooltip = "Reset the player's loadout to the current loadout of the player object.";
+				property = "Bax_Persist_ResetPlayerLoadout";
+				defaultValue = "false";
 			};
 
-			class EnablePlayerMedical: Checkbox {
-				displayName = "Player Medical";
-				tooltip = "Whether or not to load player's previous medical state. Does not stop loading a dead player.";
-				property = "Bax_Persist_LoadPlayerMedical";
-				defaultValue = "true";
+			class Bax_Persist_ResetPlayerPosition: Checkbox {
+				displayName = "Reset Player Position";
+				tooltip = "Reset the player's position to the current position of the player object.";
+				property = "Bax_Persist_ResetPlayerPosition";
+				defaultValue = "false";
 			};
 
-			class EnablePlayerKeySide: Checkbox {
+			class Bax_Persist_ResetPlayerMedical: Checkbox {
+				displayName = "Reset Player Medical";
+				tooltip = "Reset the player's medical when loading in.";
+				property = "Bax_Persist_ResetPlayerMedical";
+				defaultValue = "false";
+			};
+
+			class Bax_Persist_LoadPlayerKeySide: Checkbox {
 				displayName = "Side Keying";
 				tooltip = "Player data is saved based on their side. Enabling side keying at later date will not load the previous un-sided data.";
 				property = "Bax_Persist_LoadPlayerKeySide";
 				defaultValue = "false";
 			};
 
-			class EnablePlayerKeyRole: Checkbox {
+			class Bax_Persist_LoadPlayerKeyRole: Checkbox {
 				displayName = "Role Keying";
 				tooltip = "Player data is saved based on their role. Enabling role keying at later date will not load the previous un-roled data.";
 				property = "Bax_Persist_LoadPlayerKeyRole";
@@ -144,32 +164,39 @@ class CfgVehicles {
 				displayName = "Object Persistence Settings";
 			};
 
-			class EnableObjectDB: Checkbox {
+			class Bax_Persist_LoadObjectDatabase: Checkbox {
 				displayName = "Object Database";
 				tooltip = "Enables loading of object data from previous sessions.";
 				property = "Bax_Persist_LoadObjectDatabase";
 				defaultValue = "true";
 			};
 
-			class EnableObjectDamage: Checkbox {
-				displayName = "Object Damage";
-				tooltip = "Whether or not to load an object's damage from previous session.";
-				property = "Bax_Persist_LoadObjectDamage";
-				defaultValue = "true";
+			class Bax_Persist_ResetObjectDamage: Checkbox {
+				displayName = "Reset Object Damage";
+				tooltip = "Reset the objects damage when loading in.";
+				property = "Bax_Persist_ResetObjectDamage";
+				defaultValue = "false";
 			};
 
-			class EnableObjectFuel: Checkbox {
-				displayName = "Object Fuel";
-				tooltip = "Whether or not to load an object's fuel from previous session.";
-				property = "Bax_Persist_LoadObjectFuel";
-				defaultValue = "true";
+			class Bax_Persist_ResetObjectFuel: Checkbox {
+				displayName = "Reset Object Fuel";
+				tooltip = "Reset the objects fuel levels when loading in.";
+				property = "Bax_Persist_ResetObjectFuel";
+				defaultValue = "false";
 			};
 
-			class EnableObjectAmmo: Checkbox {
-				displayName = "Object Ammo";
-				tooltip = "Whether or not to load an object's ammo from previous session.";
-				property = "Bax_Persist_LoadObjectAmmo";
-				defaultValue = "true";
+			class Bax_Persist_ResetObjectAmmo: Checkbox {
+				displayName = "Reset Object Ammo";
+				tooltip = "Reset the objects ammo when loading. This does not reset pylons.";
+				property = "Bax_Persist_ResetObjectAmmo";
+				defaultValue = "false";
+			};
+
+			class Bax_Persist_RemoveDeadObjects: Checkbox {
+				displayName = "Remove Dead Objects";
+				tooltip = "Remove objects that are dead from the database before spawning everything if object database is loaded.";
+				property = "Bax_Persist_RemoveDeadObjects";
+				defaultValue = "false";
 			};
 
 			class SubCategoryVariables {
@@ -178,7 +205,7 @@ class CfgVehicles {
 				displayName = "Variables Persistence Settings";
 			};
 
-			class EnableVariablesDB: Checkbox {
+			class Bax_Persist_LoadVariablesDatabase: Checkbox {
 				displayName = "Variables Database";
 				tooltip = "Enables loading of mission namespace variables from previous sessions.";
 				property = "Bax_Persist_LoadVariablesDatabase";
@@ -190,102 +217,6 @@ class CfgVehicles {
 
 		class ModuleDescription: ModuleDescription {
 			description = "Initializes persistence.";
-		};
-	};
-
-	class Module_Bax_Persist_RegisterObject: Module_F {
-		scope = 2;
-		displayName = "Register Object";
-		// icon = "";
-		category = "Bax_Persist";
-
-		function = "bax_persist_fnc_moduleRegisterObject";
-		functionPriority = 20;
-		isGlobal = 0;
-		isTriggerActivated = 0;
-		isDisposable = 0;
-		class Attributes: AttributesBase {
-			class ObjectID: Edit {
-				displayNAme = "Object ID";
-				tooltip = "Unique ID that is used for saving and loading an object. If a persistent object with this ID already exists, this ""loads"" the object and prevents it from being loaded a second time.";
-				property = "Bax_Persist_ObjectId";
-				defaultValue = "''";
-			};
-
-			class ResetPosition: Checkbox {
-				displayName = "Reset Position";
-				tooltip = "Do not load the object's position from the object database.";
-				property = "Bax_Persist_ResetPosition";
-				defaultValue = "false";
-			};
-
-			class ResetInventory: Checkbox {
-				displayName = "Reset Inventory";
-				tooltip = "Do not load the object's inventory from the object database.";
-				property = "Bax_Persist_ResetInventory";
-				defaultValue = "false";
-			};
-
-			class ResetDamage: Checkbox {
-				displayName = "Reset Damage";
-				tooltip = "Do not load the object's damage from the object database.";
-				property = "Bax_Persist_ResetDamage";
-				defaultValue = "false";
-			};
-
-			class ResetFuel: Checkbox {
-				displayName = "Reset Fuel";
-				tooltip = "Do not load the object's fuel from the object database. Does not apply for anything that does not have fuel.";
-				property = "Bax_Persist_ResetFuel";
-				defaultValue = "false";
-			};
-
-			class ResetAmmo: Checkbox {
-				displayName = "Reset Ammo";
-				tooltip = "Do not load the object's ammo from the object database. Pylons are still loaded, but all default mags are left in the vehicle.";
-				property = "Bax_Persist_ResetAmmo";
-				defaultValue = "false";
-			};
-
-			class ModuleDescription: ModuleDescription {};
-		};
-
-		class ModuleDescription: ModuleDescription {
-			description = "Register this object for saving. Does not work with units. You can safely reuse this on an added object from a previous mission. The options here allow you adjust some of the recorded data for the object, such as resetting the position can be used to bring a vehicle back to base.";
-		};
-	};
-
-	class Module_Bax_Persist_RegisterInventory: Module_F {
-		scope = 2;
-		displayName = "Register Inventory";
-		// icon = "";
-		category = "Bax_Persist";
-
-		function = "bax_persist_fnc_moduleRegisterInventory";
-		functionPriority = 20;
-		isGlobal = 0;
-		isTriggerActivated = 0;
-		isDisposable = 0;
-		class Attributes: AttributesBase {
-			class InventoryID: Edit {
-				displayNAme = "Inventory ID";
-				tooltip = "Unique ID that is used for saving and loading an inventory.";
-				property = "Bax_Persist_InventoryId";
-				defaultValue = "''";
-			};
-
-			class ResetInventory: Checkbox {
-				displayName = "Reset Inventory";
-				tooltip = "Instead of loading the inventory from the database, set the saved inventory to the inventory of the object. Does nothing if there is no record for the given ID yet.";
-				property = "Bax_Persist_ResetInventory";
-				defaultValue = "false";
-			};
-
-			class ModuleDescription: ModuleDescription {};
-		};
-
-		class ModuleDescription: ModuleDescription {
-			description = "Register this object's inventory for saving under a unique ID. This does not save this object. Useful for saving and loading a player locker or similar systems. This module is included mainly for convenience as the inventory database is designed to be used by scripts rather than this module.";
 		};
 	};
 
@@ -648,6 +579,160 @@ class CfgVehicles {
 			description = "Object variables to be saved and loaded on the next mission start. To keep variables being saved, you must define this every mission.";
 		};
 	};
+
+	class Module_Bax_Persist_SpawnAreaWhitelist: Module_F {
+		scope = 2;
+		displayName = "Spawn Area: Whitelist";
+		// icon = "";
+		category = "Bax_Persist";
+
+		function = "bax_persist_fnc_moduleSpawnAreaWhitelist";
+		functionPriority = 20;
+		isGlobal = 0;
+		isTriggerActivated = 0;
+		isDisposable = 0;
+
+		canSetArea = 1;
+		canSetAreaShape = 1;
+		camSetAreaHeight = 1;
+		class AttributeValues {
+			size3[] = { 100, 100, -1 };
+			isRectangle = 0;
+		};
+
+		class Attributes: AttributesBase {
+
+			class ModuleDescription: ModuleDescription {};
+		};
+
+		class ModuleDescription: ModuleDescription {
+			description = "Whitelists an area for players to spawn back into. If they are not in this area when they load their persistence data, teleport them to any synced objects or whitelist teleport areas. If no teleport areas exist, the module is used instead. Multiple of these can be used.";
+		};
+	};
+
+	// class Module_Bax_Persist_SpawnAreaBlacklist: Module_F {
+	// 	scope = 2;
+	// 	displayName = "Spawn Area: Blacklist";
+	// 	// icon = "";
+	// 	category = "Bax_Persist";
+
+	// 	function = "bax_persist_fnc_moduleSpawnAreaBlacklist";
+	// 	functionPriority = 20;
+	// 	isGlobal = 0;
+	// 	isTriggerActivated = 0;
+	// 	isDisposable = 0;
+
+	// 	canSetArea = 1;
+	// 	canSetAreaShape = 1;
+	// 	camSetAreaHeight = 1;
+	// 	class AttributeValues {
+	// 		size3[] = { 100, 100, -1 };
+	// 		isRectangle = 0;
+	// 	};
+
+	// 	class Attributes: AttributesBase {
+
+	// 		class ModuleDescription: ModuleDescription {};
+	// 	};
+
+	// 	class ModuleDescription: ModuleDescription {
+	// 		description = "Blacklists an area for players to not spawn into. If they are in this area when they load their persistence data, teleport them to any synced objects or whitelist teleport areas. If no teleport areas exist, the module is used instead. Multiple of these can be used.";
+	// 	};
+	// };
+
+	class Module_Bax_Persist_SpawnAreaTeleport: Module_F {
+		scope = 2;
+		displayName = "Spawn Area: Teleport";
+		// icon = "";
+		category = "Bax_Persist";
+
+		function = "bax_persist_fnc_spawnAreaTeleport";
+		functionPriority = 20;
+		isGlobal = 0;
+		isTriggerActivated = 0;
+		isDisposable = 0;
+
+		class Attributes: AttributesBase {
+			class Radius: Edit {
+				displayName = "Teleport Radius";
+				tooltip = "Radius of area that player can be moved to. Min: 5 | Max: 100";
+				property = "Bax_Persist_Radius";
+				defaultValue = "5";
+				typeName = "NUMBER";
+			};
+
+			class ModuleDescription: ModuleDescription {};
+		};
+
+		class ModuleDescription: ModuleDescription {
+			description = "Areas to be teleported to when a player is not in a whitelist or is in a black list zone.";
+		};
+	};
+
+	// class Module_Bax_Persist_PersistentArea: Module_F {
+	// 	scope = 2;
+	// 	displayName = "Persistent Area";
+	// 	// icon = "";
+	// 	category = "Bax_Persist";
+
+	// 	function = "bax_persist_fnc_modulePersistentArea";
+	// 	functionPriority = 20;
+	// 	isGlobal = 0;
+	// 	isTriggerActivated = 0;
+	// 	isDisposable = 0;
+
+	// 	canSetArea = 1;
+	// 	canSetAreaShape = 1;
+	// 	camSetAreaHeight = 1;
+	// 	class AttributeValues {
+	// 		size3[] = { 100, 100, -1 };
+	// 		isRectangle = 0;
+	// 	};
+
+	// 	class Attributes: AttributesBase {
+	// 		// TODO: Add prefix for IDs
+	// 		// TODO: Add type selectors
+	// 		// TODO: 
+
+	// 		class ModuleDescription: ModuleDescription {};
+	// 	};
+
+	// 	class ModuleDescription: ModuleDescription {
+	// 		description = "Creates an area where any objects in the zone will be saved.";
+	// 	};
+	// };
+
+	class Module_Bax_Persist_RegisterObject {
+		scope = 1;
+		scopeCurator = 2;
+		displayName = "Spawn Area: Teleport";
+		// icon = "";
+		category = "Bax_Persist";
+
+		function = "bax_persist_fnc_dialogRegisterObject";
+		functionPriority = 20;
+		isGlobal = 0;
+		isTriggerActivated = 0;
+		isDisposable = 0;
+
+		curatorCanAttach = 1;
+
+		class Attributes: AttributesBase {
+			class Radius: Edit {
+				displayName = "Teleport Radius";
+				tooltip = "Radius of area that player can be moved to. Min: 5 | Max: 100";
+				property = "Bax_Persist_Radius";
+				defaultValue = "5";
+				typeName = "NUMBER";
+			};
+
+			class ModuleDescription: ModuleDescription {};
+		};
+
+		class ModuleDescription: ModuleDescription {
+			description = "Areas to be teleported to when a player is not in a whitelist or is in a black list zone.";
+		};
+	};
 };
 
 class ctrlMenuStrip;
@@ -673,6 +758,177 @@ class display3DEN {
 					picture = "";
 					action = "[] call bax_persist_fnc_openDBManager";
 					opensNewWindow = 0;
+				};
+			};
+		};
+	};
+};
+
+class Cfg3DEN {
+	class Object {
+		class AttributeCategories {
+			class Bax_Persist_Category {
+				displayName = "Persist Options";
+				collapsed = 1;
+				class Attributes {
+					class Bax_Persist_ExcludePlayer {
+						displayName = "Exclude Player from Persist";
+						tooltip = "If toggled, this player object will not load data on join and will not be saved. Useful for temporary roles like RP roles or temporary per-mission special roles.";
+						property = "Bax_Persist_ExcludePlayer";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ObjectDescription {
+						title = "Object Persistence";
+						property = "Bax_Persist_ObjectDescription";
+						control = "SubCategoryDesc2";
+						description = "Use this to override the data for a vehicle in the database. The object class will be overriden if the new object is different from the saved object. Damage also will not apply to the new object.";
+						condition = "1 - objectControllable";
+					};
+
+					class Bax_Persist_ObjectId {
+						displayName = "Object ID";
+						tooltip = "The ID used to store and load the object information. If the object ID is already registered, this object is used. If the object is different from the original, everything besides damage is loaded.";
+						property = "Bax_Persist_ObjectId";
+						control = "Edit";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "''";
+						unique = 1;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "STRING";
+					};
+
+					class Bax_Persist_ResetObjectPosition {
+						displayName = "Reset Position";
+						tooltip = "Resets the object's Position with the current position.";
+						property = "Bax_Persist_ResetObjectPosition";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ResetObjectInventory {
+						displayName = "Reset Inventory";
+						tooltip = "Resets the objects Inventory.";
+						property = "Bax_Persist_ResetObjectInventory";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ResetObjectDamage {
+						displayName = "Reset Damage";
+						tooltip = "Resets the object's Damage.";
+						property = "Bax_Persist_ResetObjectDamage";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ResetObjectFuel {
+						displayName = "Reset Fuel";
+						tooltip = "Resets the object's Fuel.";
+						property = "Bax_Persist_ResetObjectFuel";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ResetObjectAmmo {
+						displayName = "Reset Ammo";
+						tooltip = "Resets the object's Ammo.";
+						property = "Bax_Persist_ResetObjectAmmo";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ToggleObject {
+						displayName = "Enable Object Persist";
+						tooltip = "You have to check this to enable object loading and saving.";
+						property = "Bax_Persist_ToggleObject";
+						control = "Checkbox";
+						expression = "if (!is3den and _value) then { [_this] call bax_persist_fnc_initObjectPersist; };";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_InventoryDescription {
+						title = "Inventory Persistence";
+						property = "Bax_Persist_InventoryDescription";
+						control = "SubCategoryDesc2";
+						description = "The ID used to load and save an inventory. While you can use objects for storage, this is the ideal solution for player lockers or consistent storages that do not need extensive object persistence.";
+						condition = "1 - objectControllable";
+					};
+
+					class Bax_Persist_InventoryId {
+						displayName = "Inventory ID";
+						tooltip = "The ID used to store and load the inventory information. The inventory is separate from the object, and only the inventory is saved when using inventory persistence.";
+						property = "Bax_Persist_InventoryId";
+						control = "Edit";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "''";
+						unique = 1;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "STRING";
+					};
+
+					class Bax_Persist_ResetInventory {
+						displayName = "Reset Inventory";
+						tooltip = "Resets the saved inventory to the inventory of this object.";
+						property = "Bax_Persist_ResetInventory";
+						control = "Checkbox";
+						expression = "_this setVariable ['%s', _value];";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
+
+					class Bax_Persist_ToggleInventory {
+						displayName = "Enable Inventory Persist";
+						tooltip = "You have to check this to enable inventory loading and saving.";
+						property = "Bax_Persist_ToggleInventory";
+						control = "Checkbox";
+						expression = "if (!is3den and _value) then { [_this] call bax_persist_fnc_initInventoryPersist; };";
+						defaultValue = "false";
+						unique = 0;
+						validate = "none";
+						condition = "1 - objectControllable";
+						typeName = "BOOL";
+					};
 				};
 			};
 		};

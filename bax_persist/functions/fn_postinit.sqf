@@ -29,7 +29,7 @@ addMissionEventHandler [
 	}
 ];
 // Singlerplayer. Player UID is _SP_PLAYER_
-if (!isMultiplayer) then {
+if (!isMultiplayer and bax_persist_loadPlayerDatabase) then {
 	[getPlayerUID player, player] call bax_persist_fnc_loadPlayer;
 };
 
@@ -48,9 +48,10 @@ addMissionEventHandler [
 	"Ended",
 	{
 		params ["_endType"];
-		if (_endType isNotEqualTo "Bax_Persist_NoSave") then {
+		if !("persistnosave" in toLower _endType) then {
 			[] call bax_persist_fnc_saveDatabase;
 		};
+		
 	}
 ];
 
@@ -58,7 +59,9 @@ if (bax_persist_autosaveEnabled) then {
 	[] call bax_persist_fnc_queueSaveDatabase;
 };
 
+if (bax_persist_cleanObjectDatabase) then {
+	[] call bax_persist_fnc_cleanDatabaseObjects;
+};
 [] call bax_persist_fnc_loadDatabaseObjects;
-[] call bax_persist_fnc_loadDatabaseVariables;
 
 ["bax_persist_loadDatabase", []] call CBA_fnc_localEvent;

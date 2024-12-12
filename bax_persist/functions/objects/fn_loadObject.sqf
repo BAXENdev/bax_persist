@@ -1,44 +1,53 @@
 
 if !(isServer) exitWith {
 	// return
-	false
+	[false, "Must be called on server"];
 };
 
 params [
-	"_objectId", ["_object", objNull], ["_resetPosition", false], ["_resetInventory", false],
-	["_resetDamage", false], ["_resetFuel", false], ["_resetAmmo", false]
+	"_objectId",
+	["_object", objNull],
+	["_resetPosition", false],
+	["_resetInventory", false],
+	["_resetDamage", false],
+	["_resetFuel", false],
+	["_resetAmmo", false]
 ];
+
+_resetPosition = _resetPosition or (_object getVariable ["Bax_Persist_ResetObjectPosition", false]);
+_resetInventory = _resetInventory or (_object getVariable ["Bax_Persist_ResetObjectInventory", false]);
+_resetDamage = _resetDamage or bax_persist_resetObjectDamage or (_object getVariable ["Bax_Persist_ResetObjectDamage", false]);
+_resetFuel = _resetFuel or bax_persist_resetObjectFuel or (_object getVariable ["Bax_Persist_ResetObjectFuel", false]);
+_resetAmmo = _resetAmmo or bax_persist_resetObjectAmmo or (_object getVariable ["Bax_Persist_ResetObjectAmmo", false]);
 
 _objectRecord = bax_persist_databaseObjects get _objectId;
 if (isNil "_objectRecord") exitWith {
 	// return
-	false;
+	[false, "No record exists in database"];
 };
 
-_objectRecord params [
-	"_class", "_posDir", "_damage", "_fuel", "_pylons", "_ammo",
-	"_inventory", "_variables", "_isSpawned"
-];
+_objectRecord params ["_class", "_posDir", "_damage", "_fuel", "_pylons", "_ammo", "_inventory", "_variables", "_isSpawned"];
 
 if (_isSpawned) exitWith {
 	// return
-	false;
+	[false, "The record has already been spawned"];
 };
 
 _posDir params ["_position", "_direction"];
 if (isNull _object) then {
-	_object = createVehicle [_class, _position];
+	_object = createVehicle [_class, ASLToATL _position];
 	_object setDir _direction;
 } else {
 	if (!_resetPosition) then {
-		_object setPosATL _position;
+		// _object setPosATL _position;
+		_object setPosASL _position;
 		_object setDir _direction;
 	};
 };
 
-if (bax_persist_loadObjectDamage and { typeOf _object isEqualTo _class }) then {
+if (!_resetDamage and { typeOf _object isEqualTo _class }) then {
 	if (_damage isEqualType 0) then {
-		_object setDamage _damage;
+		_object setDamage [_damage, false];
 	} else {
 		{
 			_hitPointValue = _x;
@@ -48,19 +57,19 @@ if (bax_persist_loadObjectDamage and { typeOf _object isEqualTo _class }) then {
 	};
 };
 
-if (!bax_persist_loadObjectFuel and _resetFuel) then {
+if (!_resetFuel) then {
 	_object setFuel _fuel;
 };
 
 if (_object isKindOf "AllVehicles") then {
-	if (_resetAmmo or !bax_persist_loadObjectAmmo) exitWith {};
-	
 	{
 		_x params ["_pylonIndex", "_pylonName", "_turretPath"];
 		_object setPylonLoadout [_pylonIndex, "", false, _turretPath];
 	} forEach (getAllPylonsInfo _object);
 
 	// TODO: Turret weapons
+
+	if (_resetAmmo) exitWith {};
 
 	{
 		_x params ["_magClass", "_turretPath"];
@@ -95,6 +104,7 @@ if (_object isKindOf "AllVehicles") then {
 } forEach _variables;
 
 _objectRecord set [(count _objectRecord - 1), true];
+[_objectId, _object] call bax_persist_fnc_registerObject;
 
 // return
-true;
+[true, "Successfully spawned"];

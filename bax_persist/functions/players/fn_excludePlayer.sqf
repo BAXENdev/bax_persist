@@ -1,9 +1,4 @@
 
-params ["_player", ["_excludeLoading", false], ["_excludeSaving", false]];
+params ["_player", ["_exclude", true]];
 
-if (_excludeLoading) then {
-	_player setVariable ["bax_persist_excludeLoading", true, true];
-};
-if (_excludeSaving) then {
-	_player setVariable ["bax_persist_excludeSaving", true, true];
-};
+_player setVariable ["bax_persist_excludePlayer", _exclude, true];

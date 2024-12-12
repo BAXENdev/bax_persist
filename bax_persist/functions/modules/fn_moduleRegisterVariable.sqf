@@ -34,20 +34,40 @@ if (_activated) then {
 		case ("Module_Bax_Persist_RegisterObjectVariable"): { bax_persist_registeredObjectVariables };
 	};
 
-	if (_variable1 isNotEqualTo "" and !isNil "_defaultValue1") then {
-		_varArray set [_variable1, _defaultValue1];
+	if (_variable1 isNotEqualTo "") then {
+		if (isNil "_defaultValue1") then {
+			_varArray set [_variable1, nil];
+		} else {
+			_varArray set [_variable1, _defaultValue1];
+		};
 	};
-	if (_variable2 isNotEqualTo "" and !isNil "_defaultValue2") then {
-		_varArray set [_variable2, _defaultValue2];
+	if (_variable2 isNotEqualTo "") then {
+		if (isNil "_defaultValue2") then {
+			_varArray set [_variable2, nil];
+		} else {
+			_varArray set [_variable2, _defaultValue2];
+		};
 	};
-	if (_variable3 isNotEqualTo "" and !isNil "_defaultValue3") then {
-		_varArray set [_variable3, _defaultValue3];
+	if (_variable3 isNotEqualTo "") then {
+		if (isNil "_defaultValue3") then {
+			_varArray set [_variable3, nil];
+		} else {
+			_varArray set [_variable3, _defaultValue3];
+		};
 	};
-	if (_variable4 isNotEqualTo "" and !isNil "_defaultValue4") then {
-		_varArray set [_variable4, _defaultValue4];
+	if (_variable4 isNotEqualTo "") then {
+		if (isNil "_defaultValue4") then {
+			_varArray set [_variable4, nil];
+		} else {
+			_varArray set [_variable4, _defaultValue4];
+		};
 	};
-	if (_variable5 isNotEqualTo "" and !isNil "_defaultValue5") then {
-		_varArray set [_variable5, _defaultValue5];
+	if (_variable5 isNotEqualTo "") then {
+		if (isNil "_defaultValue5") then {
+			_varArray set [_variable5, nil];
+		} else {
+			_varArray set [_variable5, _defaultValue5];
+		};
 	};
 };
 

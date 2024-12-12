@@ -1,8 +1,17 @@
 
-if !(isMissionProfileNamespaceLoaded) exitWith {};
+if !(isMissionProfileNamespaceLoaded) exitWith {
+	[
+		"Mission Profile Namespace is not loaded. If none exists copy the one from the server. All zeuses also get the databases saved." +
+		"If one does exist, it will be in your profile and be missionName.vars or missionGroupName.vars. You must start a level and return to editor to load it."
+	] call BIS_fnc_3DENShowMessage;
+};
 
 _saveData = missionProfileNamespace getVariable "bax_persist_saveData";
-if (isNil  "_saveData") exitWith {};
+if (isNil  "_saveData") exitWith {
+	[
+		"Save data does exist in missionProfileNamespace"
+	] call BIS_fnc_3DENShowMessage;
+};
 
 _saveData params ["_saveData", "_databasePlayers", "_databaseObjects", "_databaseVariables", "_databaseInventories"];
 
@@ -12,10 +21,6 @@ all3DENEntities params ["_objects", "_groups", "_triggers", "_systems", "_waypoi
 _persistLayerId = -1 add3DENLayer "Persistence"; // -1 means create in root
 _playerLayerId = _persistLayerId add3DENLayer "Players (Presence=false)";
 _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
-
-// https://community.bistudio.com/wiki/set3DENAttribute
-// https://community.bistudio.com/wiki/get3DENAttribute/
-// TODO: Check object inventory
 
 {
 	_key = _x splitString "_";
@@ -33,7 +38,7 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 			case (str civilian): { _soldierClass = "C_Man_1" };
 		};
 	};
-	_player = create3DENEntity ["Object", _soldierClass, _position];
+	_player = create3DENEntity ["Object", _soldierClass, (ASLToATL _position)];
 	_player set3DENLayer _playerLayerId;
 	_player set3DENAttribute ["rotation", [0 ,0, _direction]];
 	if (count _key > 1) then {
@@ -49,16 +54,14 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 
 	_player setUnitLoadout _loadout;
 	save3DENInventory [_player];
-
-	// tODO: Test setting custom attributes and adding a diaply to show them?
-	
 } forEach _databasePlayers;
 
 {
+	_objectId = _x;
 	_y params ["_class", "_posDir", "_damage", "_fuel", "_pylons", "_ammo", "_inventory", "_variables", "_spawned"];
 
 	_posDir params ["_position", "_direction"];
-	_object = create3DENEntity ["Object", _class, _position, true];
+	_object = create3DENEntity ["Object", _class, (ASLToATL _position), true];
 	_object set3DENLayer _objectLayerId;
 	_object set3DENAttribute ["rotation", [0 ,0, _direction]];
 
@@ -102,10 +105,12 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 		_pylonAttribute = "";
 		{
 			_magClass = _x select 2;
-			_pylonAttribute = format ["%1%2;", _pylonAttribute, _magClass];
+			_pylonAttribute = _pylonAttribute + (_magClass + ";");
 		} forEach _pylons;
+		_pylonAttribute = "[" + _pylonAttribute + "]";
 		_object set3DENAttribute ["Pylons", _pylonAttribute];
 	};
 
-	// TODO: Add module
+	_object set3DENAttribute ["Bax_Persist_ObjectId", _objectId];
+	_object set3DENAttribute ["Bax_Persist_ToggleObject", true];
 } forEach _databaseObjects;

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="iwc2O81dyxZiJ7qCZxJC" name="Page-1">
-        <mxGraphModel dx="1100" dy="1312" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="774" dy="363" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10,23 +10,56 @@
                 <mxCell id="3" value="Database:&lt;br&gt;0: System Time at creation&lt;br&gt;1: Player Registry (hashmap)&lt;br&gt;2: Object Registry (array)&lt;br&gt;3: Mission Namespace Custom Variable Registry (hashmap)&lt;br&gt;4: Markers (side based? hashmap?)&lt;br&gt;&lt;br&gt;Player Registry Record:&lt;br&gt;Key: Steam ID&lt;br&gt;0: &quot;Keys&quot; [Role, Side]&lt;br&gt;1: Loadout&lt;br&gt;2: Position&lt;br&gt;3: Ace Medical State&lt;br&gt;4: Custom Variable Registry&lt;br&gt;* How should I apply this? Should I have keying for role and side?&lt;br&gt;Add options to persist module to use side and role for keying a player record&lt;br&gt;Should a player have multiple records base on side and role?&lt;br&gt;Right now, this holds a single record, and would be overwritten if things are changed, thus a player can't return to this state if they returned to the old side/role&lt;br&gt;&lt;br&gt;Object Registry Record:&lt;br&gt;0: Object Type&lt;br&gt;1: [Position, direction]&lt;br&gt;2: Hitpoints&lt;br&gt;3: Inventory&lt;br&gt;4: Custom Variable Registry&lt;br&gt;&lt;br&gt;Custom Variable Record:&lt;br&gt;0: name&lt;br&gt;1: value&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;For custom variable module:&lt;br&gt;Attributes:&lt;br&gt;* Variable name&lt;br&gt;* Default value&lt;br&gt;* Clear old value on load" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" parent="1" vertex="1">
                     <mxGeometry x="425" y="40" width="400" height="730" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=18;" edge="1" parent="1" source="5" target="7">
+                <mxCell id="8" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=18;" parent="1" source="5" target="7" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="Preinit:&lt;br&gt;Init MPNamespace" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;" vertex="1" parent="1">
+                <mxCell id="5" value="Preinit:&lt;br&gt;Init MPNamespace" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="880" y="40" width="180" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=18;" edge="1" parent="1" source="7" target="10">
+                <mxCell id="11" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=18;" parent="1" source="7" target="10" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="Object Init&lt;br&gt;Module activates&lt;br&gt;systems" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;" vertex="1" parent="1">
+                <mxCell id="7" value="Object Init&lt;br&gt;Module activates&lt;br&gt;systems" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="880" y="240" width="180" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="Postinit&lt;br&gt;Player DB set&lt;br&gt;Namespace and&lt;br&gt;objects loaded" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;" vertex="1" parent="1">
+                <mxCell id="10" value="Postinit&lt;br&gt;Player DB set&lt;br&gt;Namespace and&lt;br&gt;objects loaded" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="880" y="440" width="180" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="12" value="Preinit:&lt;br&gt;Init MPNamespace" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;fontStyle=1" vertex="1" parent="1">
+                <mxCell id="12" value="Preinit:&lt;br&gt;Init MPNamespace" style="ellipse;whiteSpace=wrap;html=1;fontSize=18;verticalAlign=middle;fontStyle=1" parent="1" vertex="1">
                     <mxGeometry x="1120" y="40" width="180" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="330" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="250" width="290" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="3den Player UI" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="135" y="210" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Player ID" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="260" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="265" width="130" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Reset Loadout" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="290" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="300" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Reset Position" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="320" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="330" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="Reset Medical" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="350" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="360" width="10" height="10" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

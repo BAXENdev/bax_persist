@@ -15,18 +15,21 @@ bax_persist_registeredObjectVariables = createHashMap;
 
 bax_persist_registeredObjects = createHashMap;
 bax_persist_registeredInventoryObjects = createHashMap;
+bax_persist_playerWhitelistAreas = [];
+// bax_persist_playerBlacklistAreas = [];
 
 // Variables set by the init module
 bax_persist_loadPlayerDatabase = false;
-bax_persist_loadPlayerPosition = false;
-bax_persist_loadPlayerMedical = false;
+bax_persist_resetPlayerPosition = false;
+bax_persist_resetPlayerMedical = false;
 bax_persist_loadPlayerKeySide = false;
 bax_persist_loadPlayerKeyRole = false;
 
 bax_persist_loadObjectDatabase = false;
-bax_persist_loadObjectDamage = false;
-bax_persist_loadObjectFuel = false;
-bax_persist_loadObjectAmmo = false;
+bax_persist_resetObjectDamage = false;
+bax_persist_resetObjectFuel = false;
+bax_persist_resetObjectAmmo = false;
+bax_persist_cleanObjectDatabase = false;
 
 bax_persist_loadVariablesDatabase = false;
 
@@ -52,7 +55,13 @@ bax_persist_databaseObjects = _saveData select 2;
 bax_persist_databaseVariables = _saveData select 3;
 bax_persist_databaseInventories = _saveData select 4;
 
+[] call bax_persist_fnc_loadDatabaseVariables;
+
 // Set spawned to false
 {
 	_y set [(count _y - 1), false];
 } forEach bax_persist_databaseObjects;
+// Set firstJoin to true. When set to false, allows players to rejoin without being reset when any reset is enabled
+{
+	_y set [(count _y) - 1, true];
+} forEach bax_persist_databasePlayers;

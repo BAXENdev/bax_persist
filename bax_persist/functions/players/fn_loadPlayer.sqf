@@ -2,19 +2,25 @@
 
 if !(isServer) exitWith {
 	// return
-	false
+	[false, "Call on server"];
 };
 
 if !(bax_persist_loadPlayerDatabase) exitWith {
 	false;
 };
 
-params ["_id", "_player"];
+params [
+	"_id",
+	"_player",
+	["_resetLoadout", false],
+	["_resetPosition", false],
+	["_resetMedical", false]
+];
 
-_excludeLoading = _player getVariable ["bax_persist_excludeLoading", false];
+_excludeLoading = _player getVariable ["bax_persist_excludePlayer", false];
 if (_excludeLoading) exitWith {
 	// return
-	false;
+	[false, "Player object is excluded from loading"];
 };
 
 if (_id isEqualType "") then {
@@ -32,7 +38,11 @@ if (isNil "_playerRecord") exitWith {
 	false;
 };
 
-_playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables"];
+_playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables", "_firstJoin"];
+
+_resetLoadout = (_resetLoadout or bax_persist_resetPlayerPosition) and _firstJoin;
+_resetPosition = (_resetPosition or bax_persist_resetPlayerPosition) and _firstJoin;
+_resetMedical = (_resetMedical or bax_persist_resetPlayerMedical) and _firstJoin;
 
 _player setUnitLoadout _loadout;
 
@@ -42,9 +52,15 @@ _player setUnitTrait ["Medic", _medicalTrait > 0];
 _player setVariable ["ACE_isEngineer", _engineerTrait, true];
 _player setUnitTrait ["Engineer", _engineerTrait > 0];
 
-if (bax_persist_loadPlayerPosition) then {
+if (!_resetPosition) then {
 	_posDir params ["_position", "_direction"];
-	_player setPosATL _position;
+
+	_whitelistCheck = [_player] call bax_persist_fnc_playerInWhiteliste;
+	_whitelistCheck params ["_inWhitelist", "_newPosition"];
+	if (!_inWhitelist) then {
+		_position = _newPosition;
+	};
+	_player setPosASL _position;
 	_player setDir _direction;
 };
 
@@ -69,5 +85,13 @@ if (_medical isEqualTo "dead") then {
 	};
 };
 
+// if (!_resetMedical) then {
+// 	if (_medical isEqualTo "dead") exitWith { _player setDamage 1; };
+// 	[_player, _medical] call ace_medical_fnc_deserializeState;
+// };
+
+// set firstJoin to false to disable resetting
+_playerRecord set [(count _playerRecord - 1), false];
+
 // return
-true;
+[true, "Successfully loaded"];

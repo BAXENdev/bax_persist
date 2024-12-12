@@ -1,18 +1,18 @@
 
 if !(isServer) exitWith {
 	// return
-	false
+	[false, "Must call on server"];
 };
 
 params [["_id", ""], ["_object", objNull]];
 
-if !(alive _object) exitWith {
-	if (_id in bax_persist_databaseObjects) then {
-		bax_persist_databaseObjects deleteAt _id;
-	};
-	// return
-	false;
-};
+// if !(alive _object) exitWith {
+// 	if (_id in bax_persist_databaseObjects) then {
+// 		bax_persist_databaseObjects deleteAt _id;
+// 	};
+// 	// return
+// 	false;
+// };
 
 if (_id isEqualTo "") then {
 	_id = _object getVariable "bax_persist_objectId";
@@ -20,17 +20,16 @@ if (_id isEqualTo "") then {
 
 if (isNil "_id" or { _id isEqualTo "" }) exitwith {
 	// return
-	false;
+	[false, "Object has not been registered"];
 };
 
 _class = typeOf _object;
-_posDir = [getPosATL _object, getDir _object];
+// _posDir = [getPosATL _object, getDir _object];
+_posDir = [getPosASL _object, getDir _object];
 _hitpoints = getAllHitPointsDamage _object;
-_damage = 0;
-if (_hitpoints isEqualTo []) then {
-	_damage = damage _object;
-} else {
-	_damage = _hitpoints select 2;
+_damage = damage _object;
+if (_hitPoints isEqualType [] and _damage != 1) then {
+	_damage = _hitPoints select 2;
 };
 
 _inventory = [_object] call bax_persist_fnc_serializeInventory;
@@ -93,4 +92,4 @@ bax_persist_databaseObjects set [
 ];
 
 // return
-true;
+[true, "Object sucessfully saved"];

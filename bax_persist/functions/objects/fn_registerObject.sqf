@@ -1,17 +1,21 @@
 
 if !(isServer) exitWith {
 	// return
-	false
+	[false, "Must call on server"];
 };
 
-params ["_id", "_object"];
+params ["_objectId", "_object"];
 
-if (_id isEqualTo "") exitWith {
+if (_objectId isEqualTo "") exitWith {};
+
+_object = bax_persist_registeredObjects get _objectId;
+if (!isNil "_object") exitWith {
 	// return
-	false;
+	[false, "Object is already registered"];
 };
 
-bax_persist_registeredObjects set [_id, _object];
+bax_persist_registeredObjects set [_objectId, _object];
+_object setVariable ["bax_persist_objectId", _objectId, true];
 
 // return
-true;
+[true, "Object successfully registered"];

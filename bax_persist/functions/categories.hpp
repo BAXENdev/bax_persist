@@ -15,6 +15,7 @@ class 3den {
 
 class Database {
     file = "bax_persist\functions\database";
+    class cleanDatabaseObjects {};
     class loadDatabaseObjects {};
     class loadDatabaseVariables {};
     class queueSaveDatabase {};
@@ -28,6 +29,7 @@ class Database {
 
 class Inventories {
     file = "bax_persist\functions\inventories";
+    class initInventoryPersist {};
     class loadInventory {};
     class registerInventory {};
     class saveInventory {};
@@ -37,13 +39,14 @@ class Inventories {
 class Modules {
     file = "bax_persist\functions\modules";
     class moduleInitializePersist {};
-    class moduleRegisterInventoryObject {};
-    class moduleRegisterObject {};
     class moduleRegisterVariable {};
+    class moduleSpawnAreaTeleport {};
+    class moduleSpawnAreaWhitelist {};
 };
 
 class Objects {
     file = "bax_persist\functions\objects";
+    class initObjectPersist {};
     class loadObject {};
     class registerObject {};
     class saveObject {};
@@ -53,5 +56,6 @@ class Players {
     file = "bax_persist\functions\players";
     class excludePlayer {};
     class loadPlayer {};
+    class playerInWhitelist {};
     class savePlayer {};
 };

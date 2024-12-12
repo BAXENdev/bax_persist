@@ -1,15 +1,15 @@
 
 if !(isServer) exitWith {
 	// return
-	false
+	[false, "Call on server"];
 };
 
 params ["_id", "_player"];
 
-_excludeSaving = _player getVariable ["bax_persist_excludeSaving", false];
+_excludeSaving = _player getVariable ["bax_persist_excludePlayer", false];
 if (_excludeSaving) exitWith {
 	// return
-	false;
+	[false, "Player excluded from saving."];
 };
 
 if (_id isEqualType "") then {
@@ -27,7 +27,8 @@ _traits = [
 	_player getVariable ["ace_medical_medicClass", 0],
 	_player getVariable ["ACE_isEngineer", 0]
 ];
-_posDir = [getPosATL _player, getDir _player];
+// _posDir = [getPosATL _player, getDir _player];
+_posDir = [getPosASL _player, getDir _player];
 _medical = [_player] call ace_medical_fnc_serializeState;
 if !(alive _player) then {
 	_medical = "dead";
@@ -54,9 +55,10 @@ bax_persist_databasePlayers set [
 		_traits,
 		_posDir,
 		_medical,
-		_variables
+		_variables,
+		false // FirstJoin = false; used to indicate when a player has rejoined during the same session
 	]
 ];
 
 // return
-true;
+[true, "Player successfully saved"];
