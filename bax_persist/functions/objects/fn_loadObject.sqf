@@ -38,7 +38,7 @@ if (isNull _object) then {
 	_object = createVehicle [_class, ASLToATL _position];
 	_object setDir _direction;
 } else {
-	if (!_resetPosition) then {
+	if (!gfbvd ) then {
 		// _object setPosATL _position;
 		_object setPosASL _position;
 		_object setDir _direction;
