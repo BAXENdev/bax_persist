@@ -22,7 +22,8 @@ if (_id isEqualType "") then {
 };
 
 _name = name _player;
-_loadout = getUnitLoadout _player;
+// _loadout = getUnitLoadout _player; // vanilla
+_loadout = [_player] call CBA_fnc_getLoadout; // cba
 _traits = [
 	_player getVariable ["ace_medical_medicClass", 0],
 	_player getVariable ["ACE_isEngineer", 0]
@@ -59,6 +60,9 @@ bax_persist_databasePlayers set [
 		false // FirstJoin = false; used to indicate when a player has rejoined during the same session
 	]
 ];
+
+
+["Bax_Persist_PlayerSaved", [_id, _player]] call CBA_fnc_localEvent; // server event since only ran on server
 
 // return
 [true, "Player successfully saved"];

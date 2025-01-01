@@ -23,12 +23,16 @@ if (isNil "_id" or { _id isEqualTo "" }) exitwith {
 	[false, "Object has not been registered"];
 };
 
+if (isNull _object) exitWith {
+	[false, "Objct no longer exists. Removing from saved objects."]
+};
+
 _class = typeOf _object;
 // _posDir = [getPosATL _object, getDir _object];
-_posDir = [getPosASL _object, getDir _object];
+_posDir = [getPosASL _object, vectorDir _object, vectorUp _object];
 _hitpoints = getAllHitPointsDamage _object;
 _damage = damage _object;
-if (_hitPoints isEqualType [] and _damage != 1) then {
+if (_hitPoints isEqualType [] and count _hitPoints > 0 and _damage != 1) then {
 	_damage = _hitPoints select 2;
 };
 
@@ -90,6 +94,9 @@ bax_persist_databaseObjects set [
 		true // has been spawned, default true. Is reset upon mission start
 	]
 ];
+
+
+["Bax_Persist_ObjectSaved", [_objectId, _object]] call CBA_fnc_localEvent; // server event since only ran on server
 
 // return
 [true, "Object sucessfully saved"];

@@ -52,7 +52,7 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 	_player set3DENAttribute ["ace_isMedic", _medicalTrait];
 	_player set3DENAttribute ["ace_isEngineer", _engineerTrait];
 
-	_player setUnitLoadout _loadout;
+	[_player, _loadout] call CBA_fnc_setLoadout;
 	save3DENInventory [_player];
 } forEach _databasePlayers;
 
@@ -60,15 +60,22 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 	_objectId = _x;
 	_y params ["_class", "_posDir", "_damage", "_fuel", "_pylons", "_ammo", "_inventory", "_variables", "_spawned"];
 
-	_posDir params ["_position", "_direction"];
+	_posDir params ["_position", "_vectorDir", "_vectorUp"];
+
 	_object = create3DENEntity ["Object", _class, (ASLToATL _position), true];
 	_object set3DENLayer _objectLayerId;
-	_object set3DENAttribute ["rotation", [0 ,0, _direction]];
+	_dirY = +_vectorDir;
+	_dirZ = +_vectorUp;
+	_dirX = _dirY vectorCrossProduct _dirZ;
+	_angleY = -1 * (asin (_dirZ select 0));
+	_angleZ = (_dirY select 0) atan2 (_dirX select 0);
+	_angleX = (_dirZ select 1) atan2 (_dirZ select 2);
+	_object set3DENAttribute ["rotation", [rad _angleX, rad _angleZ, rad _angleY]];
 
 	// cant add explicit damage. Do I add an average damage value? Set to health to 0 if not alive?
 	_object set3DENAttribute ["fuel", _fuel];
-	// pylons?
-	// ["PylonRack_12Rnd_missiles;PylonRack_12Rnd_missiles;"]
+	// TODO: pylons
+	// attribute structure ["PylonRack_12Rnd_missiles;PylonRack_12Rnd_missiles;"]
 
 	// [[weapons, magazines, items, backpacks], false=storage] // cant show subcontainers?
 	// ammobox sample structure: ["[[[[""arifle_TRG21_GL_F""],[1]],[[""30Rnd_45ACP_Mag_SMG_01""],[1]],[[""V_PlateCarrierGL_tna_F""],[1]],[[""B_AssaultPack_blk""],[1]]],false]"]
@@ -111,6 +118,11 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 		_object set3DENAttribute ["Pylons", _pylonAttribute];
 	};
 
-	_object set3DENAttribute ["Bax_Persist_ObjectId", _objectId];
-	_object set3DENAttribute ["Bax_Persist_ToggleObject", true];
+	_pos = (ASLToATL _position) vectorAdd [0, -10, 0];
+	// _pos set [2, 0];
+	_logic = create3DENEntity ["Logic", "Module_Bax_Persist_RegisterObject", _pos];
+	_logic set3DENLayer _objectLayerId;
+	add3DENConnection ["Sync", [_logic], _object];
+	// TODO: This does not work here?
+	_logic set3DENAttribute ["Bax_Persist_ObjectId", _objectId];
 } forEach _databaseObjects;

@@ -8,8 +8,7 @@ params ["_objectId", "_object"];
 
 if (_objectId isEqualTo "") exitWith {};
 
-_object = bax_persist_registeredObjects get _objectId;
-if (!isNil "_object") exitWith {
+if (_objectId in bax_persist_registeredObjects) exitWith {
 	// return
 	[false, "Object is already registered"];
 };

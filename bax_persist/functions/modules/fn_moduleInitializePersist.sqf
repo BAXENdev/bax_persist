@@ -1,9 +1,15 @@
 
+#include "\bax_persist\include.hpp"
+
 _logic = _this param [0, objnull, [objnull]];
 _units = _this param [1, [], [[]]];
 _activated = _this param [2, true, [true]];
 
 if (_activated) then {
+	// #ifdef DEBUG
+	// DLOG("Running Persist Init Module");
+	// #endif
+
 	bax_persist_savingEnabled = _logic getVariable ["Bax_Persist_EnableSaving", true];
 	_autosaveTimer = _logic getVariable ["Bax_Persist_AutosaveTimer", 40];
 	bax_persist_autosaveTimer = (_autosaveTimer min 120) max 15;
@@ -27,4 +33,8 @@ if (_activated) then {
 	bax_persist_loadVariablesDatabase = _logic getVariable ["Bax_Persist_LoadVariablesDatabase", true];
 };
 
+#ifdef DEBUG
+#else
+deleteVehicle _logic;
+#endif
 true;

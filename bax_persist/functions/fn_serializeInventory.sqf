@@ -1,7 +1,9 @@
 
+// TODO: Mag packing breaks items that uses mag counts to store an "ID" for that item, such as ace intel items.
+
 params ["_object"];
 
-private ["_items", "_magazines", "_weapons", "_backpacks", "_inventories"];
+private ["_inventory", "_items", "_magazines", "_weapons", "_backpacks", "_inventories"];
 
 _items = [];
 _magazines = [];

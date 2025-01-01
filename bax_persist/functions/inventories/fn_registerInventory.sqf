@@ -6,9 +6,7 @@ if !(isServer) exitWith {
 
 params ["_inventoryId", "_inventoryObject"];
 
-
-_object = bax_persist_registeredInventoryObjects get _inventoryId;
-if (!isNil "_object") exitWith {
+if (_inventoryId in bax_persist_registeredInventoryObjects) exitWith {
 	// return
 	[false, "Object is already registered"];
 };

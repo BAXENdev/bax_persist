@@ -1,7 +1,7 @@
 
 // returns [bool, new_teleport_pos]
 
-privateAll;
+#include "\bax_persist\include.hpp"
 
 params ["_player"];
 
@@ -15,14 +15,15 @@ _closestWhitelist = objNull;
 _closestDistance = 9999999;
 {
 	_whitelistLogic = _x;
-	_area = _whitelistLogic getVariable "objectArea";
-	if (_player inAreaArray _area) exitWith { // break for loop
+	_center = getPosATL _whitelistLogic;
+	_area = [_center] + (_whitelistLogic getVariable "objectArea");
+	if (count ([_player] inAreaArray _area) > 0) exitWith { // break for loop
 		_inWhitelist = true;
-	} else {
-		_distance = _player distance2D _whitelistLogic;
-		if (_distance < _closestDistance) then {
-			_closestWhitelist = _whitelistLogic;
-		};
+	};
+
+	_distance = _player distance2D _whitelistLogic;
+	if (_distance < _closestDistance) then {
+		_closestWhitelist = _whitelistLogic;
 	};
 } forEach (bax_persist_playerWhitelistAreas select {
 	(_x getVariable ["bax_persist_whitelistTeleports", []]) isNotEqualTo []
@@ -33,7 +34,7 @@ if (_inWhitelist) exitWith {
 	[true, [0, 0, 0]];
 };
 
-_syncedTeleports = _logic getVariable ["bax_persist_whitelistTeleports", []];
+_syncedTeleports = _closestWhitelist getVariable ["bax_persist_whitelistTeleports", []];
 if (_syncedTeleports isEqualTo []) exitWith {
 	// return
 	[true, [0, 0, 0]];
@@ -41,7 +42,7 @@ if (_syncedTeleports isEqualTo []) exitWith {
 
 _whitelistTeleport = selectRandom _syncedTeleports;
 _posASL = getPosASL _whitelistTeleport;
-_radius = _whitelistTeleport getVariable "Radius";
+_radius = _whitelistTeleport getVariable "Bax_Persist_Radius";
 _finalPosASL = [
 	(_posASL select 0) + ((random (_radius * 2)) - _radius),
 	(_posASL select 1) + ((random (_radius * 2)) - _radius),

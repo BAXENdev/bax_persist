@@ -8,6 +8,10 @@ if !(bax_persist_loadVariablesDatabase) exitWith {};
 {
 	_variable = _x;
 	_defaultValue = _y;
+	_currentValue = missionNamespace getVariable _variable;
+	if !(isNil "_currentValue") then {
+		continue;
+	};
 
 	missionNamespace setVariable [_variable, _defaultValue, true];
 } forEach bax_persist_registeredNamespaceVariables;

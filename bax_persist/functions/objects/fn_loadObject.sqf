@@ -1,7 +1,7 @@
 
 if !(isServer) exitWith {
 	// return
-	[false, "Must be called on server"];
+	[false, "Must be called on server", objNull];
 };
 
 params [
@@ -14,34 +14,32 @@ params [
 	["_resetAmmo", false]
 ];
 
-_resetPosition = _resetPosition or (_object getVariable ["Bax_Persist_ResetObjectPosition", false]);
-_resetInventory = _resetInventory or (_object getVariable ["Bax_Persist_ResetObjectInventory", false]);
-_resetDamage = _resetDamage or bax_persist_resetObjectDamage or (_object getVariable ["Bax_Persist_ResetObjectDamage", false]);
-_resetFuel = _resetFuel or bax_persist_resetObjectFuel or (_object getVariable ["Bax_Persist_ResetObjectFuel", false]);
-_resetAmmo = _resetAmmo or bax_persist_resetObjectAmmo or (_object getVariable ["Bax_Persist_ResetObjectAmmo", false]);
+// _resetPosition = _resetPosition;
+// _resetInventory = _resetInventory;
+_resetDamage = _resetDamage or bax_persist_resetObjectDamage;
+_resetFuel = _resetFuel or bax_persist_resetObjectFuel;
+_resetAmmo = _resetAmmo or bax_persist_resetObjectAmmo;
 
 _objectRecord = bax_persist_databaseObjects get _objectId;
 if (isNil "_objectRecord") exitWith {
 	// return
-	[false, "No record exists in database"];
+	[false, "No record exists in database", objNull];
 };
 
-_objectRecord params ["_class", "_posDir", "_damage", "_fuel", "_pylons", "_ammo", "_inventory", "_variables", "_isSpawned"];
+_objectRecord params ["_class", "_posDir", "_damage", "_fuel", "_pylons", "_ammo", "_inventory", "_variables"];
 
-if (_isSpawned) exitWith {
-	// return
-	[false, "The record has already been spawned"];
-};
-
-_posDir params ["_position", "_direction"];
+_posDir params ["_position", "_vectorDir", "_vectorUp"];
 if (isNull _object) then {
-	_object = createVehicle [_class, ASLToATL _position];
-	_object setDir _direction;
+	// _object = createVehicle [_class, [0, 0, 0]];
+	_object = _class createVehicle [0, 0, 0];
+	_object setVariable ["BIS_enableRandomization", false];
+	_object setPosASL _position;
+	_object setVectorDirAndUp [_vectorDir, _vectorUp];
 } else {
-	if (!gfbvd ) then {
+	if (!_resetPosition) then {
 		// _object setPosATL _position;
 		_object setPosASL _position;
-		_object setDir _direction;
+		_object setVectorDirAndUp [_vectorDir, _vectorUp];
 	};
 };
 
@@ -57,11 +55,16 @@ if (!_resetDamage and { typeOf _object isEqualTo _class }) then {
 	};
 };
 
+if (!alive _object) exitWith {
+	// return
+	[true, "Object successfully spawned; Object is dead.", _object];
+};
+
 if (!_resetFuel) then {
 	_object setFuel _fuel;
 };
 
-if (_object isKindOf "AllVehicles") then {
+if (_object isKindOf "AllVehicles" and typeOf _object isEqualTo _class) then {
 	{
 		_x params ["_pylonIndex", "_pylonName", "_turretPath"];
 		_object setPylonLoadout [_pylonIndex, "", false, _turretPath];
@@ -93,6 +96,10 @@ if (_object isKindOf "AllVehicles") then {
 {
 	_variable = _x;
 	_defaultValue = _y;
+	_currentValue = _object getVariable _variable;
+	if !(isNil "_currentValue") then {
+		continue;
+	};
 
 	_object setVariable [_variable, _defaultValue, true];
 } forEach bax_persist_registeredObjectVariables;
@@ -103,8 +110,7 @@ if (_object isKindOf "AllVehicles") then {
 	_object setVariable [_variable, _value, true];
 } forEach _variables;
 
-_objectRecord set [(count _objectRecord - 1), true];
-[_objectId, _object] call bax_persist_fnc_registerObject;
+["Bax_Persist_ObjectLoaded", [_objectId, _object]] call CBA_fnc_localEvent; // server event since only ran on server
 
 // return
-[true, "Successfully spawned"];
+[true, "Successfully spawned", _object];

@@ -1,10 +1,19 @@
 
-[ ]: Add player reset value similar to object spawned value for mid mission rejoins
-[ ]: Create a persistent area
-[ ]: For setting pos, ASL vs ATL?
-- Advanced detection for objects floating in the air?
-- Floating objects over water?
-- Add snapping for floating objects?
+[x]: Add player reset value similar to object spawned value for mid mission rejoins
+[x]: For setting pos, ASL vs ATL?
 [ ]: Add destroyed terrain building objects persistence
-[ ]: VIV Persistence? How? Add VIV keying: [Carrying IDs, Carried ID] If carried ID is not empty, then do not manually spawn. 3den ViV command? None rn
-[ ]: OPbject unique attribute persistence: Textures, vehicle part collection, other 3den attributes, RRR stats, ace options
+[ ]: VIV Persistence? How? Add VIV keying: [Carrying IDs, Carried ID] If carried ID is not empty, then do not manually spawn and let carrier vehicle do spawning. 3den ViV command? None rn
+[ ]: Object unique attribute persistence: Textures, vehicle part collection, other 3den attributes, RRR stats, ace options // Do it like CBA_ExtendedLoadout?
+[x]: Add CBA_fnc_getLoadout and CBA_fnc_setLoadout functionality for extended loadout support
+[ ]: Add variables module to 3den persist preview
+[x]: Update object direction to be vector direction and vector up
+[x]: Zeus Module - Save Persist
+[x]: Persistent Areas
+- Types: AllVehicles ReammoBox_F WeaponHolderXX Static ThingX
+[x]: Event Hooks: Player Load, Object Load, Save Database
+[x]: Fix 3den Preview Rotation - test
+[ ]: Change register object module to 2 modules: module and curator. fix relevant functiosn
+[x]: Update return values for loadObject to include object for when function is called and creates object
+[ ]: Create custom object attribute for displaying full inventory, magazines, and pylons
+- Do I add a custom item menu to add stuff? (No, I really dont want to do something crazy like that)
+[x]: Remove isSpawned from object database. Detect if id is already in registeredObjects before loading when loading object database during postinit

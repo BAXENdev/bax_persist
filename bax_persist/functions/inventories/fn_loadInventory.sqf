@@ -13,5 +13,8 @@ if (isNil "_inventory") exitWith {
 };
 
 [_object, _inventory] call bax_persist_fnc_deserializeInventory;
+
+["Bax_Persist_InventoryLoaded", [_inventoryId, _object]] call CBA_fnc_localEvent; // server event since only ran on server
+
 // return
 [true, "Successfully loaded"];

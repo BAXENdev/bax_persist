@@ -9,4 +9,8 @@ if (_activated) then {
 	_logic setVariable ["bax_persist_whitelistTeleports", _syncedTeleports, true];
 };
 
+// #ifdef DEBUG
+// #else
+// deleteVehicle _logic;
+// #endif
 true;

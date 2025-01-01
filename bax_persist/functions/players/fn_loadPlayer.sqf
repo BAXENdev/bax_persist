@@ -1,4 +1,5 @@
 
+#include "\bax_persist\include.hpp"
 
 if !(isServer) exitWith {
 	// return
@@ -16,6 +17,10 @@ params [
 	["_resetPosition", false],
 	["_resetMedical", false]
 ];
+
+#ifdef DEBUG
+DLOG1("Loading player: %1", name _player);
+#endif
 
 _excludeLoading = _player getVariable ["bax_persist_excludePlayer", false];
 if (_excludeLoading) exitWith {
@@ -35,7 +40,7 @@ if (_id isEqualType "") then {
 _playerRecord = bax_persist_databasePlayers get _id;
 if (isNil "_playerRecord") exitWith {
 	// return
-	false;
+	[false, "No player record"];
 };
 
 _playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables", "_firstJoin"];
@@ -44,7 +49,8 @@ _resetLoadout = (_resetLoadout or bax_persist_resetPlayerPosition) and _firstJoi
 _resetPosition = (_resetPosition or bax_persist_resetPlayerPosition) and _firstJoin;
 _resetMedical = (_resetMedical or bax_persist_resetPlayerMedical) and _firstJoin;
 
-_player setUnitLoadout _loadout;
+// _player setUnitLoadout _loadout; // vanilla
+[_player, _loadout] call CBA_fnc_setLoadout; // cba
 
 _traits params ["_medicalTrait", "_engineerTrait"];
 _player setVariable ["ace_medical_medicClass", _medicalTrait, true];
@@ -55,11 +61,18 @@ _player setUnitTrait ["Engineer", _engineerTrait > 0];
 if (!_resetPosition) then {
 	_posDir params ["_position", "_direction"];
 
-	_whitelistCheck = [_player] call bax_persist_fnc_playerInWhiteliste;
-	_whitelistCheck params ["_inWhitelist", "_newPosition"];
-	if (!_inWhitelist) then {
-		_position = _newPosition;
+	if (_firstJoin) then {
+		_whitelistCheck = [_player] call bax_persist_fnc_playerInWhitelist;
+		_whitelistCheck params ["_inWhitelist", "_newPosition"];
+		if (!_inWhitelist) then {
+			
+			#ifdef DEBUG
+			DLOG1("Setting whitelist position: %1", _newPosition);
+			#endif
+			_position = _newPosition;
+		};
 	};
+
 	_player setPosASL _position;
 	_player setDir _direction;
 };
@@ -67,6 +80,10 @@ if (!_resetPosition) then {
 {
 	_variable = _x;
 	_defaultValue = _y;
+	_currentValue = _player getVariable _variable;
+	if !(isNil "_currentValue") then {
+		continue;
+	};
 
 	_player setVariable [_variable, _defaultValue, true];
 } forEach bax_persist_registeredPlayerVariables;
@@ -80,7 +97,7 @@ if (!_resetPosition) then {
 if (_medical isEqualTo "dead") then {
 	_player setDamage 1;
 } else {
-	if (bax_persist_loadPlayerMedical) then {
+	if (!bax_persist_resetPlayerMedical) then {
 		[_player, _medical] call ace_medical_fnc_deserializeState;
 	};
 };
@@ -92,6 +109,8 @@ if (_medical isEqualTo "dead") then {
 
 // set firstJoin to false to disable resetting
 _playerRecord set [(count _playerRecord - 1), false];
+
+["Bax_Persist_PlayerLoaded", [_id, _player]] call CBA_fnc_localEvent; // server event since only ran on server
 
 // return
 [true, "Successfully loaded"];

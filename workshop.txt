@@ -1,0 +1,55 @@
+[h1] Baxen's Persistence Mod [/h1]
+
+Yes, another persistence mod.
+
+This mod is more like a mod with persistence API mod when compared to mods like Simple Persist and RCO Persist. It is made for a campaign I am running in 2025.
+I am sharing this because I like sharing my scripts, so I hope at least some of you enjoy!
+
+
+[h2] Features: [/h2]
+[list]
+    [*] Player Persistence
+        [*] Position
+        [*] Loadout
+        [*] Medical
+        [*] Custom Variables
+    [*] Object Persistence
+        [*] Position
+        [*] Inventory
+        [*] Pylons and Ammo
+        [*] Damage (including death)
+        [*] Fuel
+        [*] Custom Variables
+    [*] Mission Namespace Variable Persistence
+    [*] Custom Inventory Persistence
+        [*] Saves the inventory of objects, same as object persistence, but excludively does inventory
+        [*] Great for loadout/storage lockers for your players
+    [*] 3den preview
+        [*] Load a preview of all saved objects
+        [*] Load a preview of all saved players
+        [*] Useful for viewing where everyone is
+        [*] Database manager [COMING SOON]
+    [*] Persistent Areas [COMING SOON]
+        [*] Save everything in a particular area
+        [*] Great for saving and loading collected supplies and recovered vehicles
+    [*] Zeus Modules
+        [*] Module for saving individual objects
+        [*] Module for trigger a save manually
+        [*] Module for creating a persistent area [COMING SOON]
+[/list]
+
+[h2] CBA Events [/h2]
+[table]
+    [tr][th] Event Name [/th][th] Params [/th][th] Description [/th][/tr]
+    [tr][td] bax_persist_databaseLoaded [/td][td] params []; [/td][td] Called when all databases are fully loaded [/td][/tr]
+    [tr][td] bax_persist_databaseSaved [/td][td] params []; [/td][td] Called when all databases are fully saved, but before missionProfileNamespace is saved [/td][/tr]
+    [tr][td] bax_persist_playerLoaded [/td][td] params ["_playerId", "_player"]; [/td][td] Called when a player is loaded [/td][/tr]
+    [tr][td] bax_persist_playerSaved [/td][td] params ["_playerId", "_player"]; [/td][td] Called when a player is saved [/td][/tr]
+    [tr][td] bax_persist_ObjectLoaded [/td][td] params ["_objectId", "_object"]; [/td][td] Called when a object is loaded [/td][/tr]
+    [tr][td] bax_persist_ObjectSaved [/td][td] params ["_objectId", "_object"]; [/td][td] Called when a object is saved [/td][/tr]
+    [tr][td] bax_persist_InventoryLoaded [/td][td] params ["_inventoryId", "_object"]; [/td][td] Called when a inventory is loaded [/td][/tr]
+    [tr][td] bax_persist_InventorySaved [/td][td] params ["_inventoryId", "_object"]; [/td][td] Called when a inventory is saved [/td][/tr]
+[/table]
+
+
+

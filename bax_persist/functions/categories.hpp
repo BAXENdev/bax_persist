@@ -29,6 +29,7 @@ class Database {
 
 class Inventories {
     file = "bax_persist\functions\inventories";
+    class deleteInventory {};
     class initInventoryPersist {};
     class loadInventory {};
     class registerInventory {};
@@ -38,18 +39,31 @@ class Inventories {
 
 class Modules {
     file = "bax_persist\functions\modules";
+    class curatorPersistentArea {};
     class moduleInitializePersist {};
-    class moduleRegisterVariable {};
+    class modulePersistentArea {};
+    class moduleRegisterInventory {};
+    class moduleRegisterObject {};
+    class moduleRegisterVariables {};
+    class moduleSaveDatabase {};
     class moduleSpawnAreaTeleport {};
     class moduleSpawnAreaWhitelist {};
 };
 
 class Objects {
     file = "bax_persist\functions\objects";
-    class initObjectPersist {};
     class loadObject {};
     class registerObject {};
+    class registerObjectRandom {};
     class saveObject {};
+    class unregisterObject {};
+};
+
+class PersistentAreas {
+    file = "bax_persist\functions\persistentAreas";
+    class addPersistentArea {};
+    class getPersistentAreaObjects {};
+    class registerPersistentAreas {};
 };
 
 class Players {
@@ -58,4 +72,10 @@ class Players {
     class loadPlayer {};
     class playerInWhitelist {};
     class savePlayer {};
+};
+
+class Zen {
+    file = "bax_persist\functions\zen";
+    class dialogPersistentArea {};
+    class dialogRegisterObject {};
 };

@@ -1,5 +1,5 @@
 
-bax_persist_isLoaded = false;
+bax_persist_databaseLoaded = false;
 
 if (!isServer) exitWith {};
 
@@ -16,6 +16,7 @@ bax_persist_registeredObjectVariables = createHashMap;
 bax_persist_registeredObjects = createHashMap;
 bax_persist_registeredInventoryObjects = createHashMap;
 bax_persist_playerWhitelistAreas = [];
+bax_persist_persistentAreas = [];
 // bax_persist_playerBlacklistAreas = [];
 
 // Variables set by the init module
@@ -39,28 +40,18 @@ if !(isMissionProfileNamespaceLoaded) then {
 	saveMissionProfileNamespace;
 };
 
-private ["_saveData"];
-_saveData = missionProfileNamespace getVariable "bax_persist_saveData";
-if (isNil "_saveData") then {
-	// saveData, player database, object database, variable database, inventory database
-	_saveData = ["2014_1_1_0_0_0_0", createHashMap, createHashMap, createHashMap, createHashMap];
-	missionProfileNamespace setVariable ["bax_persist_saveData", _saveData];
-	missionProfileNamespace setVariable ["bax_persist_saveBackups", []];
-	saveMissionProfileNamespace;
-};
-
-// _saveData select 0 is save date.
-bax_persist_databasePlayers = _saveData select 1;
-bax_persist_databaseObjects = _saveData select 2;
-bax_persist_databaseVariables = _saveData select 3;
-bax_persist_databaseInventories = _saveData select 4;
+bax_persist_saveDate = missionNamespace getVariable ["bax_persist_saveDate", createHashmap];
+bax_persist_databasePlayers = missionNamespace getVariable ["bax_persist_databasePlayers", createHashmap];
+bax_persist_databaseObjects = missionNamespace getVariable ["bax_persist_databaseObjects", createHashmap];
+bax_persist_databaseVariables = missionNamespace getVariable ["bax_persist_databaseVariables", createHashmap];
+bax_persist_databaseInventories = missionNamespace getVariable ["bax_persist_databaseInventories", createHashmap];
 
 [] call bax_persist_fnc_loadDatabaseVariables;
 
-// Set spawned to false
-{
-	_y set [(count _y - 1), false];
-} forEach bax_persist_databaseObjects;
+// // Set spawned to false
+// {
+// 	_y set [(count _y - 1), false];
+// } forEach bax_persist_databaseObjects;
 // Set firstJoin to true. When set to false, allows players to rejoin without being reset when any reset is enabled
 {
 	_y set [(count _y) - 1, true];
