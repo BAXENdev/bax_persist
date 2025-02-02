@@ -46,13 +46,19 @@ _checkBoxWeaponHolder = [
 _checkBoxStatics  = [
 	"CHECKBOX",
 	["Statics and Things", "This covers most buildings and decorations. Even some unexpected objects, so use with caution."],
-	true,
+	false,
 	false
 ];
 
 [
 	"Create Persistent Area",
-	[_checkBox],
+	[
+		_sliderRadius,
+		_checkBoxAllVehicles,
+		_checkBoxReammoBox,
+		_checkBoxWeaponHolder,
+		_checkBoxStatics
+	],
 	// 2) On Confirm, unscheduled
 	{
 		params ["_dialogValues","_args"];

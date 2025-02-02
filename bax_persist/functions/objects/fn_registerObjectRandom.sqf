@@ -12,11 +12,12 @@ if (_objectId in bax_persist_registeredObjects) exitWith {
 	[false, "Object is already registered"];
 };
 
-_objectName = getText (configFile >> "CfgVehicles" >> typeOf _object >> "displayName");
+_objectName = getText (configFile >> "CfgVehicles" >> (typeOf _object) >> "displayName");
 
 while { _objectId isEqualTo "" or _objectId in bax_persist_registeredObjects } do {
 	_objectId = format [
 		"%1_%2",
+		_objectName,
 		round random 1000000
 	];
 };

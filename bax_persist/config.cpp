@@ -5,13 +5,16 @@ class CfgPatches {
 		author = "BAXENATOR";
 		units[] = {
 			"Module_Bax_Persist_InitializePersist",
+			"Module_Bax_Persist_RegisterVariables",
+			"Module_Bax_Persist_RegisterPlayerVariables",
+			"Module_Bax_Persist_RegisterObjectVariables",
+			"Module_Bax_Persist_SpawnAreaWhitelist",
+			"Module_Bax_Persist_SpawnAreaTeleport",
+			"Module_Bax_Persist_PersistentArea",
+			"Curator_Bax_Persist_PersistentArea",
 			"Module_Bax_Persist_RegisterObject",
 			"Module_Bax_Persist_RegisterInventory",
-			"Module_Bax_Persist_RegisterVariable",
-			"Module_Bax_Persist_RegisterPlayerVariable",
-			"Module_Bax_Persist_RegisterObjectVariable",
-			"Module_Bax_Persist_WhitelistSpawnArea",
-			"Module_Bax_Persist_WhitelistTeleport"
+			"Module_Bax_Persist_SaveDatabse"
 		};
 		requiredVersion = 1.0;
 		requiredAddons[] = {"ace_medical", "cba_main"};
@@ -684,10 +687,31 @@ class CfgVehicles {
 			};
 
 			class Bax_Persist_Vehicles: Checkbox {
-				displayName = "Player Database";
-				tooltip = "Enables loading of player data from previous sessions.";
-				property = "Bax_Persist_LoadPlayerDatabase";
+				displayName = "Save Vehicles";
+				tooltip = "Enables saving of vehicles in the area";
+				property = "Bax_Persist_Vehicles";
 				defaultValue = "true";
+			};
+
+			class Bax_Persist_ReammoBox: Checkbox {
+				displayName = "Save Ammo Boxes";
+				tooltip = "Enables saving of ammo boxes in the area. An ammo box is any non-vehicle object that has an inventory.";
+				property = "Bax_Persist_ReammoBox";
+				defaultValue = "true";
+			};
+
+			class Bax_Persist_WeaponHolders: Checkbox {
+				displayName = "Save Ground Items";
+				tooltip = "Enables saving of ground items in the area. Ground items are in objects called ""weapon holders"" which are saved.";
+				property = "Bax_Persist_WeaponHolders";
+				defaultValue = "true";
+			};
+
+			class Bax_Persist_Statics: Checkbox {
+				displayName = "Statics and Things";
+				tooltip = "Enables saving of static and thingX objects. Statics typically classify as buildings and walls. Things will typically classify as decorations and objects with physics.";
+				property = "Bax_Persist_Statics";
+				defaultValue = "false";
 			};
 
 			class ModuleDescription: ModuleDescription {};
@@ -699,7 +723,7 @@ class CfgVehicles {
 	};
 
 	class Curator_Bax_Persist_PersistentArea: Module_F {
-		scope = 0;
+		scope = 1;
 		scopeCurator = 2;
 		displayName = "Create Persistent Area";
 		// icon = "";
@@ -707,6 +731,7 @@ class CfgVehicles {
 
 		function = "bax_persist_fnc_curatorPersistentArea";
 		functionPriority = 20;
+		curatorCanAttach = 1;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;
@@ -729,6 +754,7 @@ class CfgVehicles {
 
 		function = "bax_persist_fnc_moduleRegisterObject";
 		functionPriority = 20;
+		curatorCanAttach = 1;
 		isGlobal = 0;
 		isTriggerActivated = 0;
 		isDisposable = 0;

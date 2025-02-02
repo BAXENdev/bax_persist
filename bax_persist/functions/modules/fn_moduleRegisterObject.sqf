@@ -13,6 +13,7 @@ if (_activated) then {
 	_attachedObject = attachedTo _logic;
 	if (!isNull _attachedObject) exitWith {
 		[_attachedObject] call bax_persist_fnc_dialogRegisterObject;
+		deleteVehicle _logic;
 		#ifdef DEBUG
 		DLOG("Running Register Object Module - Zeus");
 		#endif
@@ -29,6 +30,7 @@ if (_activated) then {
 			#ifdef DEBUG
 			DLOG("Exiting due to object being man");
 			#endif
+			deleteVehicle _logic;
 		};
 
 		_objectId = _logic getVariable ["Bax_Persist_ObjectId", ""];
@@ -36,6 +38,7 @@ if (_activated) then {
 			#ifdef DEBUG
 			DLOG("Exiting due to no id given");
 			#endif
+			deleteVehicle _logic;
 		};
 
 		_resetPosition = _logic getVariable ["Bax_Persist_ResetObjectPosition", false];
@@ -55,11 +58,8 @@ if (_activated) then {
 			// load object registers, but if there is nothing to load, we still need to register
 		[_objectId, _object] call bax_persist_fnc_registerObject;
 	};
+
+	deleteVehicle _logic;
 };
 
-#ifdef DEBUG
-#else
-deleteVehicle _logic;
-#endif
 true;
-

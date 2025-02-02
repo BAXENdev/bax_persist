@@ -36,23 +36,18 @@ bax_persist_loadVariablesDatabase = false;
 
 // Inventory database is an opt in system, so no need to for toggle
 
-if !(isMissionProfileNamespaceLoaded) then {
-	saveMissionProfileNamespace;
-};
+// if !(isMissionProfileNamespaceLoaded) then {
+// 	saveMissionProfileNamespace;
+// };
 
-bax_persist_saveDate = missionNamespace getVariable ["bax_persist_saveDate", createHashmap];
-bax_persist_databasePlayers = missionNamespace getVariable ["bax_persist_databasePlayers", createHashmap];
-bax_persist_databaseObjects = missionNamespace getVariable ["bax_persist_databaseObjects", createHashmap];
-bax_persist_databaseVariables = missionNamespace getVariable ["bax_persist_databaseVariables", createHashmap];
-bax_persist_databaseInventories = missionNamespace getVariable ["bax_persist_databaseInventories", createHashmap];
+bax_persist_saveDate = missionProfileNamespace getVariable ["bax_persist_saveDate", "2014_1_1_0_0_0_0"];
+bax_persist_databasePlayers = missionProfileNamespace getVariable ["bax_persist_databasePlayers", createHashmap];
+bax_persist_databaseObjects = missionProfileNamespace getVariable ["bax_persist_databaseObjects", createHashmap];
+bax_persist_databaseVariables = missionProfileNamespace getVariable ["bax_persist_databaseVariables", createHashmap];
+bax_persist_databaseInventories = missionProfileNamespace getVariable ["bax_persist_databaseInventories", createHashmap];
 
 [] call bax_persist_fnc_loadDatabaseVariables;
 
-// // Set spawned to false
-// {
-// 	_y set [(count _y - 1), false];
-// } forEach bax_persist_databaseObjects;
-// Set firstJoin to true. When set to false, allows players to rejoin without being reset when any reset is enabled
 {
 	_y set [(count _y) - 1, true];
 } forEach bax_persist_databasePlayers;

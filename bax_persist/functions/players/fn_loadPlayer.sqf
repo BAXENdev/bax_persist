@@ -43,6 +43,8 @@ if (isNil "_playerRecord") exitWith {
 	[false, "No player record"];
 };
 
+["Bax_Persist_LoadingPlayer", [_player, _playerId]] call CBA_fnc_localEvent; // server event since only called on server
+
 _playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables", "_firstJoin"];
 
 _resetLoadout = (_resetLoadout or bax_persist_resetPlayerPosition) and _firstJoin;
@@ -67,9 +69,10 @@ if (!_resetPosition) then {
 		if (!_inWhitelist) then {
 			
 			#ifdef DEBUG
-			DLOG1("Setting whitelist position: %1", _newPosition);
+			DLOG1("Outside whitelist. Updating position: %1", _newPosition);
 			#endif
 			_position = _newPosition;
+			_direction = getDir _player;
 		};
 	};
 

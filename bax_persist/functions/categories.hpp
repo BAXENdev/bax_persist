@@ -30,7 +30,7 @@ class Database {
 class Inventories {
     file = "bax_persist\functions\inventories";
     class deleteInventory {};
-    class initInventoryPersist {};
+    class initInventory {};
     class loadInventory {};
     class registerInventory {};
     class saveInventory {};
@@ -52,6 +52,7 @@ class Modules {
 
 class Objects {
     file = "bax_persist\functions\objects";
+    class deleteObject {};
     class loadObject {};
     class registerObject {};
     class registerObjectRandom {};

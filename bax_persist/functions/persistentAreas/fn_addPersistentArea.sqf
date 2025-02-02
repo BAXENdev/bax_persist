@@ -1,7 +1,7 @@
 
 if (!isServer) exitWith {};
 
-params ["_object", "_radius", ["_vehicles", false], ["_ammoBoxes", false], ["_weaponHolders", false], ["_statics", false]]; // TODO: Do I allow things?
+params ["_object", "_radius", ["_vehicles", false], ["_ammoBoxes", false], ["_weaponHolders", false], ["_statics", false]];
 
 if (isNil "_object" or { isNull _object }) exitWith {};
 
@@ -16,7 +16,7 @@ if (_ammoBoxes) then {
 };
 
 if (_weaponHolders) then {
-	_persistentTypes append ["WeaponHolder", "WeaponHolderSimulated"];
+	_persistentTypes append ["WeaponHolder", "WeaponHolderSimulated"]; // TODO: simulated is a subtype of thingX
 };
 
 if (_statics) then {
@@ -25,11 +25,9 @@ if (_statics) then {
 
 // thingX
 
-if (_types isEqualTo []) exitWith {};
+if (_persistentTypes isEqualTo []) exitWith {};
 
 _object setVariable ["bax_persist_persistentAreaRadius", _radius];
 _object setVariable ["bax_persist_persistentAreaTypes", _persistentTypes];
 
 bax_persist_persistentAreas pushBack _object;
-
-// AllVehicles ReammoBox_F WeaponHolderXX Static ThingX

@@ -43,6 +43,8 @@ if (isNull _object) then {
 	};
 };
 
+["Bax_Persist_LoadingObject", [_object, _objectId]] call CBA_fnc_localEvent; // server event since only called on server
+
 if (!_resetDamage and { typeOf _object isEqualTo _class }) then {
 	if (_damage isEqualType 0) then {
 		_object setDamage [_damage, false];

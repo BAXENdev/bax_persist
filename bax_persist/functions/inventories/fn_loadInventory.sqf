@@ -6,6 +6,8 @@ if !(isServer) exitWith {
 
 params ["_id", "_object"];
 
+["Bax_Persist_InventoryLoading", [_inventoryId, _object]] call CBA_fnc_localEvent; // server event since only ran on server
+
 _inventory = bax_persist_databaseInventories get _id;
 if (isNil "_inventory") exitWith {
 	// return

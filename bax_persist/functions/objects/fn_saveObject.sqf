@@ -4,21 +4,21 @@ if !(isServer) exitWith {
 	[false, "Must call on server"];
 };
 
-params [["_id", ""], ["_object", objNull]];
+params [["_objectId", ""], ["_object", objNull]];
 
 // if !(alive _object) exitWith {
-// 	if (_id in bax_persist_databaseObjects) then {
-// 		bax_persist_databaseObjects deleteAt _id;
+// 	if (_objectId in bax_persist_databaseObjects) then {
+// 		bax_persist_databaseObjects deleteAt _objectId;
 // 	};
 // 	// return
 // 	false;
 // };
 
-if (_id isEqualTo "") then {
-	_id = _object getVariable "bax_persist_objectId";
+if (_objectId isEqualTo "") then {
+	_objectId = _object getVariable "bax_persist_objectId";
 };
 
-if (isNil "_id" or { _id isEqualTo "" }) exitwith {
+if (isNil "_objectId" or { _objectId isEqualTo "" }) exitwith {
 	// return
 	[false, "Object has not been registered"];
 };
@@ -81,7 +81,7 @@ _variables = [];
 } forEach bax_persist_registeredObjectVariables;
 
 bax_persist_databaseObjects set [
-	_id,
+	_objectId,
 	[
 		_class,
 		_posDir,

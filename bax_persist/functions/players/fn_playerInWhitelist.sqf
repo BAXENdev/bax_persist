@@ -16,7 +16,7 @@ _closestDistance = 9999999;
 {
 	_whitelistLogic = _x;
 	_center = getPosATL _whitelistLogic;
-	_area = [_center] + (_whitelistLogic getVariable "objectArea");
+	_area = [[_center]] + (_whitelistLogic getVariable "objectArea");
 	if (count ([_player] inAreaArray _area) > 0) exitWith { // break for loop
 		_inWhitelist = true;
 	};
@@ -37,7 +37,7 @@ if (_inWhitelist) exitWith {
 _syncedTeleports = _closestWhitelist getVariable ["bax_persist_whitelistTeleports", []];
 if (_syncedTeleports isEqualTo []) exitWith {
 	// return
-	[true, [0, 0, 0]];
+	[false, getPosASL _player];
 };
 
 _whitelistTeleport = selectRandom _syncedTeleports;

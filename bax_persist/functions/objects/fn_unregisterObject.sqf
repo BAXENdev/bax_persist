@@ -14,7 +14,7 @@ _object setVariable ["bax_persist_objectId", nil, true];
 bax_persist_registeredObjects deleteAt _objectId;
 
 if (_deleteRecord) then {
-	bax_persist_databaseObjects deleteAt _objectId;
+	[_objectId] call bax_persist_fnc_deleteObject;
 };
 
 // return
