@@ -11,6 +11,8 @@ missionGroup = "campaignName";
 ```
 To explain, the `fileName.vars` file that holds the data is named after the mission name. If you played the same mission again, the old database would be loaded. If you set the `missionGroup` config, this specifies the name of the `.vars` file, and as such if multiple missions have the same `missionGroup` config, they will use the same `.vars` file allowing for cross mission saving and loading.
 
+The `.vars` is always created regardless. If you do not set the missionGroup but still want to save and load the databases, make sure you rename the final mission file to be the same as the first mission on the server. You may need to delete the old mission file.
+
 ## Mission Variables
 | Variables | Type | Description |
 |-|-|-|
@@ -146,12 +148,7 @@ _element params ["_items", "_magazines", "_weapons", "_backpacks", "_subInventor
     _x params ["_backpackClass", "_subInventory"];
     // Recursive sub inventory structure... :)
     _subInventory params ["_items", "_magazines", "_weapons", "_backpacks", "_subInventories"];
-} forEach 
+} forEach _subInventories;
 
 ```
 
-## Example of Adding Persistent Time
-```sqf
-// TODO: Add on load
-// TODO: Add on save
-```
