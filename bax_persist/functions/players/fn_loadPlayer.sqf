@@ -1,6 +1,10 @@
 
 #include "\bax_persist\include.hpp"
 
+#ifdef DEBUG2
+DLOG(str _this);
+#endif
+
 if !(isServer) exitWith {
 	// return
 	[false, "Call on server"];
@@ -18,15 +22,15 @@ params [
 	["_resetMedical", false]
 ];
 
-#ifdef DEBUG
-DLOG1("Loading player: %1", name _player);
-#endif
-
 _excludeLoading = _player getVariable ["bax_persist_excludePlayer", false];
 if (_excludeLoading) exitWith {
 	// return
 	[false, "Player object is excluded from loading"];
 };
+
+#ifdef DEBUG
+DLOG1("Loading player: %1", name _player);
+#endif
 
 if (_id isEqualType "") then {
 	if (bax_persist_loadPlayerKeySide) then {
@@ -43,16 +47,22 @@ if (isNil "_playerRecord") exitWith {
 	[false, "No player record"];
 };
 
-["Bax_Persist_LoadingPlayer", [_player, _playerId]] call CBA_fnc_localEvent; // server event since only called on server
+["Bax_Persist_LoadingPlayer", [_player]] call CBA_fnc_localEvent; // server event since only called on server
 
 _playerRecord params ["_name", "_loadout", "_traits", "_posDir", "_medical", "_variables", "_firstJoin"];
 
-_resetLoadout = (_resetLoadout or bax_persist_resetPlayerPosition) and _firstJoin;
+// If it is not their first time joining this session, do not reset. Allows mid match rejoins to keep their data.
+_resetLoadout = (_resetLoadout or bax_persist_resetPlayerLoadout) and _firstJoin;
 _resetPosition = (_resetPosition or bax_persist_resetPlayerPosition) and _firstJoin;
 _resetMedical = (_resetMedical or bax_persist_resetPlayerMedical) and _firstJoin;
 
-// _player setUnitLoadout _loadout; // vanilla
-[_player, _loadout] call CBA_fnc_setLoadout; // cba
+if (!_resetLoadout) then {
+	// _player setUnitLoadout _loadout; // vanilla
+	[_player, _loadout] call CBA_fnc_setLoadout; // cba
+	#ifdef DEBUG2
+	DLOG1("Setting loadout: %1", name _player);
+	#endif
+};
 
 _traits params ["_medicalTrait", "_engineerTrait"];
 _player setVariable ["ace_medical_medicClass", _medicalTrait, true];
@@ -105,6 +115,7 @@ if (_medical isEqualTo "dead") then {
 	};
 };
 
+// OLD SYSTEM. Above is better
 // if (!_resetMedical) then {
 // 	if (_medical isEqualTo "dead") exitWith { _player setDamage 1; };
 // 	[_player, _medical] call ace_medical_fnc_deserializeState;

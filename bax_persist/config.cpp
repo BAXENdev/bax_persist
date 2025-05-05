@@ -846,6 +846,19 @@ class CfgVehicles {
 				typeName = "BOOL";
 			};
 
+			class SubCategoryDelete {
+				data = "AttributeSystemSubcategory";
+				control = "SubCategory";
+				displayName = "Delete Object";
+			};
+
+			class Bax_Persist_DeleteObject: Checkbox {
+				displayName = "Delete Object";
+				tooltip = "Will delete the object from the database on mission load. Does not require a synced object, just an Object ID";
+				property = "Bax_Persist_DeleteObject";
+				defaultValue = "false";
+			};
+
 			class ModuleDescription: ModuleDescription {};
 		};
 

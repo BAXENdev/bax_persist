@@ -4,11 +4,11 @@ if !(isServer) exitWith {
 	[false, "Must call on server"];
 };
 
-params ["_id", "_object"];
+params ["_inventoryId", "_object"];
 
 ["Bax_Persist_InventoryLoading", [_inventoryId, _object]] call CBA_fnc_localEvent; // server event since only ran on server
 
-_inventory = bax_persist_databaseInventories get _id;
+_inventory = bax_persist_databaseInventories get _inventoryId;
 if (isNil "_inventory") exitWith {
 	// return
 	[false, "No record exists in the database"];

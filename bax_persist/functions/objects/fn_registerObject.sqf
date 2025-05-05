@@ -1,4 +1,10 @@
 
+#include "\bax_persist\include.hpp"
+
+#ifdef DEBUG2
+DLOG(str _this);
+#endif
+
 if !(isServer) exitWith {
 	// return
 	[false, "Must call on server"];

@@ -10,6 +10,12 @@ if (_activated) then {
 	DLOG("Running Register Object Module");
 	#endif
 
+	_objectId = _logic getVariable ["Bax_Persist_ObjectId", ""];
+	_deleteObject = _logic getVariable ["Bax_Persist_DeleteObject", false];
+	if (_deleteObject) exitWith {
+		[_objectId] call bax_persist_fnc_deleteObject;
+	};
+
 	_attachedObject = attachedTo _logic;
 	if (!isNull _attachedObject) exitWith {
 		[_attachedObject] call bax_persist_fnc_dialogRegisterObject;
@@ -33,7 +39,6 @@ if (_activated) then {
 			deleteVehicle _logic;
 		};
 
-		_objectId = _logic getVariable ["Bax_Persist_ObjectId", ""];
 		if (_objectId isEqualTo "") exitWith {
 			#ifdef DEBUG
 			DLOG("Exiting due to no id given");

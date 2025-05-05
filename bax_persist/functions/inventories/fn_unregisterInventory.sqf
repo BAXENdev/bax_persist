@@ -1,7 +1,7 @@
 
 params ["_inventoryId", ["_doSave", true], ["_clearInventory", true]];
 
-if (!_inventoryId in bax_persist_registeredInventoryObjects) exitWith {
+if (!(_inventoryId in bax_persist_registeredInventoryObjects)) exitWith {
 	// return
 	[false, "No object registered"];
 };
@@ -20,7 +20,7 @@ if (_clearInventory) then {
 	clearBackpackCargoGlobal _inventoryObject;
 };
 
-bax_persist_databaseInventories deleteAt _inventoryId;
+bax_persist_registeredInventoryObjects deleteAt _inventoryId;
 
 // return
 [true, "Successfully unregistered"];

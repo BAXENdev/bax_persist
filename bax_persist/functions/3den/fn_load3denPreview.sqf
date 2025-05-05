@@ -6,14 +6,20 @@ if !(isMissionProfileNamespaceLoaded) exitWith {
 	] call BIS_fnc_3DENShowMessage;
 };
 
-_saveData = missionProfileNamespace getVariable "bax_persist_saveData";
-if (isNil  "_saveData") exitWith {
+_saveDate = missionProfileNamespace getVariable "bax_persist_saveDate";
+if (isNil  "_saveDate") exitWith {
 	[
 		"Save data does exist in missionProfileNamespace"
 	] call BIS_fnc_3DENShowMessage;
 };
 
-_saveData params ["_saveData", "_databasePlayers", "_databaseObjects", "_databaseVariables", "_databaseInventories"];
+// _saveData params ["_saveData", "_databasePlayers", "_databaseObjects", "_databaseVariables", "_databaseInventories"];
+_saveDate = missionProfileNamespace getVariable ["bax_persist_saveDate", "2014_1_1_0_0_0_0"];
+_databasePlayers = missionProfileNamespace getVariable ["bax_persist_databasePlayers", createHashmap];
+_databaseObjects = missionProfileNamespace getVariable ["bax_persist_databaseObjects", createHashmap];
+_databaseVariables = missionProfileNamespace getVariable ["bax_persist_databaseVariables", createHashmap];
+_databaseInventories = missionProfileNamespace getVariable ["bax_persist_databaseInventories", createHashmap];
+
 
 all3DENEntities params ["_objects", "_groups", "_triggers", "_systems", "_waypoints", "_markers", "_layers", "_comments"];
 // check for persistence layer
@@ -71,6 +77,7 @@ _objectLayerId = _persistLayerId add3DENLayer "Objects (Presence=true)";
 	_angleZ = (_dirY select 0) atan2 (_dirX select 0);
 	_angleX = (_dirZ select 1) atan2 (_dirZ select 2);
 	_object set3DENAttribute ["rotation", [rad _angleX, rad _angleZ, rad _angleY]];
+	_object setVectorDirAndUp [_vectorDir, _vectorUp];
 
 	// cant add explicit damage. Do I add an average damage value? Set to health to 0 if not alive?
 	_object set3DENAttribute ["fuel", _fuel];

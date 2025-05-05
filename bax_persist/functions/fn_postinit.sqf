@@ -65,7 +65,6 @@ addMissionEventHandler [
 		if !("persistnosave" in toLower _endType) then {
 			[] call bax_persist_fnc_saveDatabase;
 		};
-		
 	}
 ];
 

@@ -1,0 +1,84 @@
+bsc_locker_fnc_setLockerName = {
+	params ["_locker", "_lockerName"];
+
+	_lockerNameActionId = _locker getVariable ["bsc_locker_nameActionId", -1];
+	_locker setUserActionText [
+		_lockerNameActionId,
+		_lockerName
+	];
+};
+
+[this] spawn {
+    waitUntil { bax_persist_databaseLoaded };
+
+    params ["_locker"];
+	_locker setVariable ["bsc_locker_claimed", false];
+	_locker setVariable ["bsc_locker_nameActionId", -1];
+
+    _locker addAction [
+        "Claim Locker",
+        {
+            params ["_locker", "_player", "_actionId", "_args"];
+
+			_locker setVariable ["bsc_locker_claimed", true, true];
+
+            _lockerId = format ["Locker ID: %1", getPlayerUID _player];
+
+			if (_player getVariable ["bsc_locker_claimed", false]) then {
+				_oldLocker = bax_persist_registeredInventoryObjects get _lockerId;
+				if (!isNil "_oldLocker") then {
+					[_oldLocker, "UNCLAIMED LOCKER"] remoteExec ["bsc_locker_fnc_setLockerName"];
+				};
+				[_lockerId] remoteExec ["bax_persist_fnc_unregisterInventory", 2];
+			};
+
+            [_lockerId, _locker] remoteExec ["bax_persist_fnc_loadInventory", 2];
+            [_lockerId, _locker] remoteExec ["bax_persist_fnc_registerInventory", 2];
+
+            _lockerName = format ["<t size=""2.0"">%1's Locker</t>", name _player];
+			[_locker, _lockerName] remoteExec ["bsc_locker_fnc_setLockerName"];
+
+			_player setVariable ["bsc_locker_claimed", true];
+        },
+        [],
+        5,
+		true,
+		true,
+		"",
+		"
+			(_target getVariable ['bax_persist_inventoryId', '']) isEqualTo ''
+		"
+    ];
+
+	_locker addAction [
+		"Unclaim Locker",
+        {
+            params ["_locker", "_player", "_actionId", "_args"];
+
+			_locker setVariable ["bsc_locker_claimed", false, true];
+			_lockerId = _locker getVariable ["bax_persist_inventoryId", ""];
+			[_lockerId] remoteExec ["bax_persist_fnc_unregisterInventory", 2];
+
+			[_locker, "UNCLAIMED LOCKER"] remoteExec ["bsc_locker_fnc_setLockerName"];
+
+			_player setVariable ["bsc_locker_claimed", false];
+        },
+        [],
+        5,
+		true,
+		true,
+		"",
+		"(_target getVariable ['bax_persist_inventoryId', '']) isNotEqualTo ''"
+	];
+
+	_nameActionId = _locker addAction [
+		"UNCLAIMED LOCKER",
+		{},
+		[],
+		6,
+		true,
+		false,
+		""
+	];
+	_locker setVariable ["bsc_locker_nameActionId", _nameActionId];
+}

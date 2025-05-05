@@ -21,6 +21,7 @@ bax_persist_persistentAreas = [];
 
 // Variables set by the init module
 bax_persist_loadPlayerDatabase = false;
+bax_persist_resetPlayerLoadout = false;
 bax_persist_resetPlayerPosition = false;
 bax_persist_resetPlayerMedical = false;
 bax_persist_loadPlayerKeySide = false;
@@ -49,5 +50,6 @@ bax_persist_databaseInventories = missionProfileNamespace getVariable ["bax_pers
 [] call bax_persist_fnc_loadDatabaseVariables;
 
 {
+	// Set first join to true
 	_y set [(count _y) - 1, true];
 } forEach bax_persist_databasePlayers;

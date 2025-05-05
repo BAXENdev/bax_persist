@@ -16,6 +16,12 @@ _inventory = [_items, _magazines, _weapons, _backpacks, _inventories];
 (getItemCargo _object) params ["_itemList", "_itemCount"];
 {
 	_item = _x;
+	if ("acre_" in _item) then {
+		_newItem = [_item] call acre_api_fnc_getBaseRadio;
+		if (_newItem isNotEqualTo "") then {
+			_item = _newItem;
+		};
+	};
 	_count = _itemCount select _forEachIndex;
 	_items pushBack [_item, _count];
 } forEach _itemList;
